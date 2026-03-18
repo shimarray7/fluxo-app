@@ -145,19 +145,15 @@
 
 html {
   scroll-behavior: smooth;
-  height: 100%;
-  /* Evitar bounce/overscroll no iOS que empurra o header para cima */
-  overflow: hidden;
+  /* height não precisa ser 100% — #app é position:fixed */
 }
 
 body {
   font-family: var(--font-body);
   background: var(--bg);
   color: var(--text);
-  height: 100%;
-  min-height: 100vh;
-  overflow-x: hidden;
-  overflow-y: auto;
+  /* overflow controlado pelo #app (position:fixed) */
+  overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -173,13 +169,13 @@ input[type="number"] { -moz-appearance: textfield; }
 
 /* ── APP SHELL ── */
 #app {
+  /* position:fixed garante cálculo correto mesmo após display:none→flex via JS */
+  position: fixed;
+  inset: 0;
   max-width: var(--max-w);
-  margin: 0 auto;
-  /* Usar 100% da altura disponível sem cortar o header */
-  height: 100%;
-  min-height: 100dvh;
-  min-height: 100vh;   /* fallback */
-  position: relative;
+  /* Centralizar horizontalmente quando viewport > max-w (desktop) */
+  left: 50%;
+  transform: translateX(-50%);
   background: var(--bg);
   overflow: hidden;    /* clips horizontalmente; o scroll fica no .scroll-area */
   display: flex;
@@ -217,10 +213,8 @@ input[type="number"] { -moz-appearance: textfield; }
 .screen {
   display: none;
   flex-direction: column;
-  /* Ocupa o espaço disponível sem cortar o header pela barra do browser */
+  /* Com #app position:fixed, basta 100% de altura */
   height: 100%;
-  min-height: 100dvh;
-  min-height: 100vh;
   animation: fadeUp .32s var(--ease-out) both;
 }
 .screen.active { display: flex; }
@@ -4925,7 +4919,13 @@ async function authOnLogin(user, nameHint) {
   document.getElementById('app').style.display = 'flex';
 
   applyTheme(localStorage.getItem('fluxo_theme') || 'dark');
-  renderAll();
+
+  /* Forçar reflow para garantir que o layout seja calculado corretamente
+     após display:none → flex (necessário em alguns browsers mobile) */
+  requestAnimationFrame(() => {
+    document.getElementById('app').style.transform = 'translateX(-50%)';
+    renderAll();
+  });
 
   /* Mostrar onboarding apenas se perfil genuinamente vazio
      (usuário novo que ainda não passou pelo onboarding desta conta) */
