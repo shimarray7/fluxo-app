@@ -26,7 +26,7 @@
   ─────────────────────────────────────────────────────────
 -->
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0c0d10">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="description" content="Fluxo — Gerenciamento de finanças pessoais">
@@ -110,10 +110,7 @@
   background: rgba(255,255,255,0.92);
   border-top-color: rgba(0,0,0,0.08);
 }
-[data-theme="light"] .header {
-  background: linear-gradient(to bottom, var(--bg) 75%, transparent);
-}
-[data-theme="light"] .score-card {
+[data-theme="light"] [data-theme="light"] .score-card {
   background: linear-gradient(150deg, #f0faf5 0%, #e8f7f0 100%);
   border-color: rgba(0,180,120,0.15);
 }
@@ -148,7 +145,9 @@
 
 html {
   scroll-behavior: smooth;
-  height: 100%;        /* base para dvh funcionar em Android */
+  height: 100%;
+  /* Evitar bounce/overscroll no iOS que empurra o header para cima */
+  overflow: hidden;
 }
 
 body {
@@ -176,8 +175,10 @@ input[type="number"] { -moz-appearance: textfield; }
 #app {
   max-width: var(--max-w);
   margin: 0 auto;
-  height: 100dvh;
-  height: 100vh;       /* fallback */
+  /* Usar 100% da altura disponível sem cortar o header */
+  height: 100%;
+  min-height: 100dvh;
+  min-height: 100vh;   /* fallback */
   position: relative;
   background: var(--bg);
   overflow: hidden;    /* clips horizontalmente; o scroll fica no .scroll-area */
@@ -216,9 +217,10 @@ input[type="number"] { -moz-appearance: textfield; }
 .screen {
   display: none;
   flex-direction: column;
-  /* Ocupa toda a viewport e deixa o scroll-area crescer internamente */
-  height: 100dvh;
-  height: 100vh; /* fallback */
+  /* Ocupa o espaço disponível sem cortar o header pela barra do browser */
+  height: 100%;
+  min-height: 100dvh;
+  min-height: 100vh;
   animation: fadeUp .32s var(--ease-out) both;
 }
 .screen.active { display: flex; }
@@ -239,8 +241,10 @@ input[type="number"] { -moz-appearance: textfield; }
 /* ── HEADER ── */
 .header {
   position: sticky; top: 0; z-index: 50;
-  background: linear-gradient(to bottom, var(--bg) 75%, transparent);
-  padding: 20px 24px 14px;
+  background: var(--bg);
+  /* padding-top: respeitar status bar do Android/iOS */
+  padding: env(safe-area-inset-top, 16px) 24px 14px;
+  padding-top: max(env(safe-area-inset-top, 0px), 20px);
   display: flex; align-items: center; justify-content: space-between;
 }
 .header-logo {
@@ -290,6 +294,7 @@ input[type="number"] { -moz-appearance: textfield; }
 .bottom-nav {
   position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
   width: 100%; max-width: var(--max-w); height: var(--nav-h);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   background: rgba(19,21,26,0.94);
   backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
   border-top: 1px solid var(--border);
@@ -1458,7 +1463,7 @@ input[type="number"] { -moz-appearance: textfield; }
     ───────────────────────────────────────────────────────────── */
     const SUPA_URL = 'https://egwgdobdiopanllhvsyy.supabase.co';
 const SUPA_KEY = 'sb_publishable_oHl0-u-N_ELgmbdNE4B0nQ_3cRvRdXO';
-    
+   
     const _supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
     window._supabase = _supabase;
   </script>
