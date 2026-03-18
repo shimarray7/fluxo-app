@@ -2481,7 +2481,7 @@ const Store = (() => {
         db.from('goals').select('*').eq('user_id', uid),
         db.from('bills').select('*').eq('user_id', uid),
         db.from('credit_cards').select('*').eq('user_id', uid),
-        db.from('profiles').select('*').eq('id', uid).single(),
+        db.from('profiles').select('*').eq('id', uid).maybeSingle(),
       ]);
 
       state.transactions = (txRes.data   || []).map(toTx);
@@ -2491,7 +2491,11 @@ const Store = (() => {
       state.creditCards  = (cardRes.data  || []).map(toCard);
       state.profile      = profRes.data   ? toProfile(profRes.data) : { ...DEFAULT.profile };
     } catch(e) {
-      console.warn('[Store] Erro ao carregar do Supabase:', e);
+      /* PGRST116 = "Row not found" para .single() — normal em conta nova */
+      if (!e?.message?.includes('PGRST116')) {
+        console.warn('[Store] Erro ao carregar do Supabase:', e);
+      }
+      /* state já foi inicializado com DEFAULT — seguro continuar */
     }
   }
 
@@ -4730,8 +4734,12 @@ async function authOnLogin(user, nameHint) {
   applyTheme(localStorage.getItem('fluxo_theme') || 'dark');
   renderAll();
 
-  /* Mostrar onboarding se perfil sem nome */
-  if (!Store.profile.name) {
+  /* Mostrar onboarding apenas se perfil genuinamente vazio
+     (usuário novo que ainda não passou pelo onboarding desta conta) */
+  const profileIsEmpty = !Store.profile.name || Store.profile.name === 'Usuário';
+  const isNewAccount   = !nameHint; /* nameHint só existe no cadastro imediato */
+  if (profileIsEmpty && !isNewAccount) {
+    /* Perfil sem nome e não é cadastro novo → onboarding */
     setTimeout(() => obShow(), 150);
   } else {
     localStorage.setItem('fluxo_onboarded', '1');
@@ -4763,10 +4771,24 @@ async function logout() {
   if (!ok) return;
   await window._supabase.auth.signOut();
   _currentUser = null;
+
+  /* Limpar estado em memória (sem apagar localStorage de tema) */
+  const theme = localStorage.getItem('fluxo_theme');
+  const swipeHint = localStorage.getItem('fluxo_swipe_hint');
+
+  /* Resetar formulários e UI */
+  document.getElementById('auth-email').value    = '';
+  document.getElementById('auth-password').value = '';
+  authSwitchTab('login');
+
   document.getElementById('app').style.display = 'none';
   document.getElementById('auth-screen').style.display = 'flex';
-  /* Limpar estado em memória */
-  await Store.boot({ id: null });
+
+  /* Restaurar preferências de UI (tema etc.) */
+  if (theme) localStorage.setItem('fluxo_theme', theme);
+  if (swipeHint) localStorage.setItem('fluxo_swipe_hint', swipeHint);
+
+  showToast('👋 Até logo!');
 }
 
 /* ════════════════════════════════════════════
@@ -5036,16 +5058,28 @@ function obNext() {
 
 function obSkip() { if (OB.step === 2) obFinish(); }
 
-function obFinish() {
+async function obFinish() {
   const name   = (document.getElementById('ob-name')?.value  || '').trim() || 'Usuário';
   const email  = (document.getElementById('ob-email')?.value || '').trim();
   const income = parseFloat(document.getElementById('ob-income')?.value)    || 0;
   const limit  = parseFloat(document.getElementById('ob-card-limit')?.value)|| 5000;
 
-  /* Salva perfil real */
+  /* Salva perfil — aguarda confirmação do Supabase antes de fechar */
   Store.updateProfile({ name, email, initials: Utils.initials(name), monthlyIncome: income });
 
-  /* Remove cartões DEFAULT e adiciona apenas os selecionados */
+  /* Aguardar gravação no Supabase (até 2s) para garantir persistência */
+  if (_currentUser) {
+    try {
+      await window._supabase.from('profiles').upsert({
+        id: _currentUser.id,
+        name, email: email || _currentUser.email || '',
+        initials: Utils.initials(name),
+        monthly_income: income,
+      });
+    } catch(e) { console.warn('[obFinish] Erro ao salvar perfil:', e); }
+  }
+
+  /* Cartões selecionados */
   ['cc-nubank', 'cc-inter'].forEach(id => Store.deleteCreditCard(id));
   [...OB.selectedCards].forEach(id => {
     const opt = CARD_OPTIONS.find(o => o.id === id);
@@ -5201,13 +5235,8 @@ function obUpdateIncomeHint() {
   /* Render inicial */
   renderAll();
 
-  /* Onboarding: exibir no primeiro acesso */
-  try {
-    if (!localStorage.getItem('fluxo_onboarded')) {
-      /* Pequeno delay para a Home renderizar antes de mostrar o overlay */
-      setTimeout(() => obShow(), 120);
-    }
-  } catch(e) { /* sem localStorage = ignora */ }
+  /* Onboarding: controlado pelo authOnLogin via Store.profile.name */
+  /* Não verificar localStorage aqui — o auth decide quando mostrar */
 
   /* Console limpo em produção — remova o comentário abaixo para debug:
   console.log('%c🟢 Fluxo v2.1 iniciado', 'color:#00e5a0;font-weight:bold;font-size:14px');
