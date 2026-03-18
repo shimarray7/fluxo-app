@@ -932,6 +932,46 @@ input[type="number"] { -moz-appearance: textfield; }
 .settings-label  { flex:1; font-size:14px; font-weight:500; }
 .settings-arrow  { color:var(--text3); font-size:16px; }
 /* ══════════════════════════════════════════
+   AUTH SCREEN
+   ══════════════════════════════════════════ */
+#auth-screen {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.auth-wrap {
+  width: 100%; max-width: 380px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.auth-logo {
+  font-family: var(--font-display);
+  font-size: 48px; font-weight: 800;
+  letter-spacing: -2px; margin-bottom: 6px;
+}
+.auth-logo span { color: var(--green); }
+.auth-tagline {
+  font-size: 14px; color: var(--text2);
+  margin-bottom: 32px;
+}
+.auth-tabs {
+  display: flex; width: 100%;
+  background: var(--surface2); border-radius: var(--radius-sm);
+  padding: 4px; margin-bottom: 24px; gap: 0;
+}
+.auth-tab {
+  flex: 1; padding: 9px 0; text-align: center;
+  font-size: 14px; font-weight: 600; color: var(--text3);
+  border-radius: calc(var(--radius-sm) - 2px);
+  cursor: pointer; transition: background .2s, color .2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.auth-tab.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+.auth-form { width: 100%; }
+
+
+/* ══════════════════════════════════════════
    ONBOARDING — layout à prova de mobile
    ══════════════════════════════════════════ */
 
@@ -1234,57 +1274,6 @@ input[type="number"] { -moz-appearance: textfield; }
 }
 .calc-tip strong { color: var(--text2); }
 
-/* ── Título de seção dentro do modo ── */
-.calc-section-title {
-  font-family: var(--font-display);
-  font-size: 13px; font-weight: 800;
-  color: var(--text2); margin-bottom: 14px;
-  letter-spacing: 0.2px;
-}
-
-/* ── Fórmula / dica técnica ── */
-.calc-formula-tip {
-  background: var(--surface2);
-  border-left: 3px solid var(--green);
-  border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
-  padding: 8px 12px;
-  font-size: 11px; color: var(--text3);
-  margin-bottom: 16px; line-height: 1.5;
-  font-family: 'DM Mono', monospace, var(--font-body);
-}
-
-/* ── Destaque no valor da parcela (Price) ── */
-.calc-pmt-highlight {
-  background: linear-gradient(135deg, rgba(0,229,160,0.08), rgba(0,229,160,0.04));
-  border: 1.5px solid rgba(0,229,160,0.25);
-  border-radius: var(--radius-sm);
-  padding: 14px 16px; margin-bottom: 14px;
-  display: flex; justify-content: space-between; align-items: center;
-}
-.calc-pmt-label { font-size: 11px; color: var(--text3); font-weight: 700; letter-spacing: 0.5px; }
-.calc-pmt-value { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--green); }
-
-/* ── Timeline bars melhoradas ── */
-.calc-timeline-bars {
-  display: flex; align-items: flex-end; gap: 2px;
-  height: 72px; padding-bottom: 2px;
-}
-.calc-tbar {
-  flex: 1; border-radius: 3px 3px 0 0;
-  background: var(--surface3);
-  transition: height .5s cubic-bezier(.34,1.56,.64,1), background .3s;
-  min-height: 4px; cursor: default;
-}
-.calc-tbar.highlight { background: var(--green); }
-.calc-tbar.mid       { background: rgba(0,229,160,0.45); }
-.calc-tbar.danger    { background: var(--red); }
-.calc-tbar.warn      { background: var(--yellow); }
-
-/* ── Result card: item cores ── */
-.calc-result-item-val.pos { color: var(--green); }
-.calc-result-item-val.neg { color: var(--red); }
-.calc-result-item-val.neu { color: var(--yellow); }
-
 /* ══════════════════════════════════════════
    FASE 3 · TEMA + SWIPE
    ══════════════════════════════════════════ */
@@ -1355,6 +1344,23 @@ input[type="number"] { -moz-appearance: textfield; }
 .score-badge  { font-size:11px; font-weight:700; padding:3px 10px; border-radius:99px; }
 .score-number { font-family:var(--font-display); font-size:52px; font-weight:800; line-height:1; letter-spacing:-2px; margin-bottom:6px; }
 .score-desc   { font-size:12px; color:var(--text2); margin-bottom:16px; }
+.score-context {
+  display: flex; align-items: flex-start; gap: 8px;
+  border-radius: var(--radius-xs);
+  padding: 9px 12px; margin-bottom: 14px;
+  font-size: 11px; line-height: 1.5;
+}
+.score-context span:first-child { flex-shrink: 0; font-size: 14px; }
+.score-context-low {
+  background: rgba(255,209,102,0.10);
+  border: 1px solid rgba(255,209,102,0.25);
+  color: var(--yellow);
+}
+.score-context-ok {
+  background: rgba(0,229,160,0.07);
+  border: 1px solid rgba(0,229,160,0.2);
+  color: var(--green);
+}
 .score-track  { height:8px; background:var(--surface3); border-radius:99px; overflow:hidden; margin-bottom:14px; }
 .score-fill   { height:100%; border-radius:99px; transition: width 1.2s var(--ease-out); }
 .score-factors { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
@@ -1421,11 +1427,89 @@ input[type="number"] { -moz-appearance: textfield; }
 .note-char-count.over { color:var(--red); }
 
 </style>
+  <!-- ═══════════════════════════════════════════
+       SUPABASE SDK + CONFIGURAÇÃO
+       ═══════════════════════════════════════════ -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    /* ─────────────────────────────────────────────────────────────
+       CONFIGURE AQUI: substitua pelos valores do seu projeto Supabase
+       Project Settings → API → Project URL e anon/public key
+    ───────────────────────────────────────────────────────────── */
+    const SUPA_URL = 'https://egwgdobdiopanllhvsyy.supabase.co';
+const SUPA_KEY = 'sb_publishable_oHl0-u-N_ELgmbdNE4B0nQ_3cRvRdXO';
+
+    const _supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+    window._supabase = _supabase;
+  </script>
 </head>
 <body>
 <!-- ═══════════════════════════
      SEÇÃO 5 · HTML — ESTRUTURA
      ═══════════════════════════ -->
+<!-- ═══════════════════════════════════════════
+     TELA DE AUTENTICAÇÃO (login / cadastro)
+     Visível apenas quando não há sessão ativa
+     ═══════════════════════════════════════════ -->
+<div id="auth-screen" style="display:none">
+  <div class="auth-wrap">
+    <div class="auth-logo">flu<span>x</span>o</div>
+    <div class="auth-tagline">Seu dinheiro, sob controle.</div>
+
+    <!-- Tabs login / cadastro -->
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="atab-login"    onclick="authSwitchTab('login')">Entrar</div>
+      <div class="auth-tab"        id="atab-register" onclick="authSwitchTab('register')">Criar conta</div>
+    </div>
+
+    <!-- Formulário -->
+    <div class="auth-form">
+      <div class="form-group" id="auth-name-group" style="display:none">
+        <label class="form-label">Seu nome</label>
+        <input class="form-input" id="auth-name" type="text" placeholder="João Silva" autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">E-mail</label>
+        <input class="form-input" id="auth-email" type="email" placeholder="seu@email.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Senha</label>
+        <div style="position:relative">
+          <input class="form-input" id="auth-password" type="password"
+            placeholder="Mínimo 6 caracteres" autocomplete="current-password"
+            style="padding-right:44px">
+          <button onclick="authTogglePass()" style="position:absolute;right:12px;top:50%;
+            transform:translateY(-50%);background:none;border:none;cursor:pointer;
+            font-size:16px;color:var(--text3)" id="auth-eye">👁</button>
+        </div>
+      </div>
+
+      <div id="auth-confirm-group" style="display:none" class="form-group">
+        <label class="form-label">Confirmar senha</label>
+        <input class="form-input" id="auth-confirm" type="password" placeholder="Repita a senha">
+      </div>
+
+      <button class="ob-btn-primary" id="auth-submit-btn" onclick="authSubmit()" style="margin-top:8px">
+        Entrar
+      </button>
+
+      <div id="auth-error" style="font-size:12px;color:var(--red);text-align:center;
+           margin-top:8px;display:none"></div>
+
+      <button onclick="authForgotPassword()" id="auth-forgot"
+        style="background:none;border:none;font-size:12px;color:var(--text3);
+               cursor:pointer;margin-top:12px;text-decoration:underline;
+               text-underline-offset:3px;display:block;width:100%;text-align:center">
+        Esqueci minha senha
+      </button>
+    </div>
+
+    <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:24px;line-height:1.6">
+      Seus dados são criptografados e armazenados<br>com segurança. Nunca compartilhamos suas informações.
+    </div>
+  </div>
+</div>
+
 <div id="app">
 
   <!-- ═══════════════════════════════════════
@@ -1528,9 +1612,9 @@ input[type="number"] { -moz-appearance: textfield; }
       <span class="nav-icon" aria-hidden="true">▣</span>
       <span class="nav-label">Cartões</span>
     </div>
-    <div class="nav-item" id="nav-calc"    onclick="goTo('calc')"    role="button" tabindex="0" aria-label="Calculadora">
-      <span class="nav-icon" aria-hidden="true">%</span>
-      <span class="nav-label">Calcular</span>
+    <div class="nav-item" id="nav-profile" onclick="goTo('profile')" role="button" tabindex="0" aria-label="Perfil">
+      <span class="nav-icon" aria-hidden="true">◐</span>
+      <span class="nav-label">Perfil</span>
     </div>
   </nav>
 
@@ -1586,7 +1670,7 @@ input[type="number"] { -moz-appearance: textfield; }
           <span class="quick-icon">🏆</span>
           <span class="quick-label">Meta</span>
         </div>
-        <div class="quick-btn" onclick="goTo('calc')" aria-label="Calculadora de Juros">
+        <div class="quick-btn" onclick="openSheet('calc')" aria-label="Calculadora de Juros">
           <span class="quick-icon">🧮</span>
           <span class="quick-label">Juros</span>
         </div>
@@ -1804,174 +1888,11 @@ input[type="number"] { -moz-appearance: textfield; }
         <div class="settings-item" onclick="exportData()"><div class="settings-icon">📤</div><span class="settings-label">Exportar dados (JSON)</span><span class="settings-arrow">›</span></div>
         <div class="settings-item" onclick="importData()"><div class="settings-icon">📥</div><span class="settings-label">Importar backup (JSON)</span><span class="settings-arrow">›</span></div>
         <div class="settings-item" onclick="confirmClearData()"><div class="settings-icon" style="background:rgba(255,107,107,0.1)">🗑</div><span class="settings-label" style="color:var(--red)">Apagar todos os dados</span><span class="settings-arrow">›</span></div>
-        <div class="settings-item" onclick="showToast('👋 Até logo!')"><div class="settings-icon">🚪</div><span class="settings-label" style="color:var(--text2)">Sair da conta</span><span class="settings-arrow">›</span></div>
+        <div class="settings-item" onclick="logout()"><div class="settings-icon">🚪</div><span class="settings-label" style="color:var(--red)">Sair da conta</span><span class="settings-arrow">›</span></div>
       </div>
       <div style="height:8px"></div>
     </div>
   </main>
-
-  <!-- ───────── TELA: CALCULADORA DE JUROS ───────── -->
-  <main class="screen" id="screen-calc" role="main" aria-label="Calculadora de Juros">
-    <div class="header">
-      <div class="header-title">Juros &amp; Simulações</div>
-      <div class="header-right">
-        <div class="icon-btn" onclick="calcReset()" aria-label="Limpar" title="Limpar campos">↺</div>
-      </div>
-    </div>
-    <div class="scroll-area" style="padding:16px 16px 40px">
-
-      <!-- Tabs de modo -->
-      <div class="calc-modes" role="tablist" aria-label="Modo de cálculo">
-        <div class="calc-mode-btn active" id="cmode-simple"    onclick="calcSetMode('simple')"    role="tab">Simples</div>
-        <div class="calc-mode-btn"        id="cmode-compound"  onclick="calcSetMode('compound')"  role="tab">Composto</div>
-        <div class="calc-mode-btn"        id="cmode-price"     onclick="calcSetMode('price')"     role="tab">Parcela</div>
-        <div class="calc-mode-btn"        id="cmode-rentab"    onclick="calcSetMode('rentab')"    role="tab">Rentabilidade</div>
-      </div>
-
-      <!-- ════ RESULTADO — sempre no topo, oculto até calcular ════ -->
-      <div class="calc-result-card" id="calc-result-card" style="display:none">
-        <div class="calc-result-label" id="calc-result-label">MONTANTE TOTAL</div>
-        <div class="calc-result-value" id="calc-result-value">R$ 0,00</div>
-        <div class="calc-result-breakdown" id="calc-result-breakdown"></div>
-      </div>
-
-      <!-- Gráfico de evolução -->
-      <div class="calc-timeline" id="calc-timeline" style="display:none">
-        <div class="calc-timeline-title" id="calc-tl-title">EVOLUÇÃO AO LONGO DO TEMPO</div>
-        <div class="calc-timeline-bars" id="calc-timeline-bars"></div>
-        <div style="display:flex;justify-content:space-between;margin-top:6px">
-          <span style="font-size:9px;color:var(--text3)" id="calc-tl-start">Início</span>
-          <span style="font-size:9px;color:var(--text3)" id="calc-tl-end">Fim</span>
-        </div>
-      </div>
-
-      <!-- ════ MODO: JUROS SIMPLES ════ -->
-      <div id="calc-panel-simple">
-        <div class="calc-section-title">💰 Juros Simples</div>
-        <div class="calc-field">
-          <div class="calc-field-label">CAPITAL INICIAL</div>
-          <input class="calc-field-input" id="cs-principal" type="number" min="0"
-                 placeholder="1.000" inputmode="decimal">
-          <div class="calc-field-suffix">R$</div>
-        </div>
-        <div class="calc-row">
-          <div class="calc-field">
-            <div class="calc-field-label">TAXA DE JUROS</div>
-            <input class="calc-field-input" id="cs-rate" type="number" min="0" step="0.01"
-                   placeholder="1,5" inputmode="decimal">
-            <div class="calc-field-suffix">%</div>
-          </div>
-          <div class="calc-field">
-            <div class="calc-field-label">PERÍODO</div>
-            <select class="calc-field-input" id="cs-period-type" style="padding-top:26px;font-size:14px">
-              <option value="month">Mensal</option>
-              <option value="year">Anual</option>
-              <option value="day">Diário</option>
-            </select>
-          </div>
-        </div>
-        <div class="calc-field">
-          <div class="calc-field-label">TEMPO</div>
-          <input class="calc-field-input" id="cs-time" type="number" min="1"
-                 placeholder="12" inputmode="numeric">
-          <div class="calc-field-suffix" id="cs-time-suffix">meses</div>
-        </div>
-        <div class="calc-formula-tip">J = C × i × t &nbsp;·&nbsp; Rendimento linear sem capitalização</div>
-      </div>
-
-      <!-- ════ MODO: JUROS COMPOSTOS ════ -->
-      <div id="calc-panel-compound" style="display:none">
-        <div class="calc-section-title">📈 Juros Compostos</div>
-        <div class="calc-field">
-          <div class="calc-field-label">CAPITAL INICIAL</div>
-          <input class="calc-field-input" id="cc-principal" type="number" min="0"
-                 placeholder="1.000" inputmode="decimal">
-          <div class="calc-field-suffix">R$</div>
-        </div>
-        <div class="calc-field">
-          <div class="calc-field-label">APORTE MENSAL (opcional)</div>
-          <input class="calc-field-input" id="cc-monthly" type="number" min="0"
-                 placeholder="0" inputmode="decimal">
-          <div class="calc-field-suffix">R$</div>
-        </div>
-        <div class="calc-row">
-          <div class="calc-field">
-            <div class="calc-field-label">TAXA MENSAL</div>
-            <input class="calc-field-input" id="cc-rate" type="number" min="0" step="0.01"
-                   placeholder="1,0" inputmode="decimal">
-            <div class="calc-field-suffix">% a.m.</div>
-          </div>
-          <div class="calc-field">
-            <div class="calc-field-label">MESES</div>
-            <input class="calc-field-input" id="cc-time" type="number" min="1"
-                   placeholder="24" inputmode="numeric">
-            <div class="calc-field-suffix">m</div>
-          </div>
-        </div>
-        <div class="calc-formula-tip">M = C × (1+i)ⁿ &nbsp;·&nbsp; Juros sobre juros, efeito exponencial</div>
-      </div>
-
-      <!-- ════ MODO: PARCELA (Price) ════ -->
-      <div id="calc-panel-price" style="display:none">
-        <div class="calc-section-title">💳 Financiamento (Tabela Price)</div>
-        <div class="calc-field">
-          <div class="calc-field-label">VALOR FINANCIADO</div>
-          <input class="calc-field-input" id="cp-principal" type="number" min="0"
-                 placeholder="50.000" inputmode="decimal">
-          <div class="calc-field-suffix">R$</div>
-        </div>
-        <div class="calc-row">
-          <div class="calc-field">
-            <div class="calc-field-label">TAXA MENSAL</div>
-            <input class="calc-field-input" id="cp-rate" type="number" min="0" step="0.01"
-                   placeholder="1,5" inputmode="decimal">
-            <div class="calc-field-suffix">% a.m.</div>
-          </div>
-          <div class="calc-field">
-            <div class="calc-field-label">PARCELAS</div>
-            <input class="calc-field-input" id="cp-time" type="number" min="1"
-                   placeholder="48" inputmode="numeric">
-            <div class="calc-field-suffix">×</div>
-          </div>
-        </div>
-        <div class="calc-formula-tip">PMT = PV × [i(1+i)ⁿ / ((1+i)ⁿ−1)] &nbsp;·&nbsp; Parcelas fixas mensais</div>
-      </div>
-
-      <!-- ════ MODO: RENTABILIDADE ════ -->
-      <div id="calc-panel-rentab" style="display:none">
-        <div class="calc-section-title">🔍 Rentabilidade Real</div>
-        <div class="calc-row">
-          <div class="calc-field">
-            <div class="calc-field-label">VALOR INICIAL</div>
-            <input class="calc-field-input" id="cr-initial" type="number" min="0"
-                   placeholder="1.000" inputmode="decimal">
-            <div class="calc-field-suffix">R$</div>
-          </div>
-          <div class="calc-field">
-            <div class="calc-field-label">VALOR FINAL</div>
-            <input class="calc-field-input" id="cr-final" type="number" min="0"
-                   placeholder="1.500" inputmode="decimal">
-            <div class="calc-field-suffix">R$</div>
-          </div>
-        </div>
-        <div class="calc-field">
-          <div class="calc-field-label">PERÍODO (meses)</div>
-          <input class="calc-field-input" id="cr-time" type="number" min="1"
-                 placeholder="12" inputmode="numeric">
-          <div class="calc-field-suffix">m</div>
-        </div>
-        <div class="calc-formula-tip">i = (VF/VI)^(1/n) − 1 &nbsp;·&nbsp; Descubra a taxa de qualquer investimento</div>
-      </div>
-
-      <!-- Botão calcular -->
-      <button class="calc-btn" onclick="calcCompute()">Calcular →</button>
-
-      <!-- Dica contextual -->
-      <div class="calc-tip" id="calc-tip">Preencha os campos e toque em <strong>Calcular</strong></div>
-
-    </div>
-  </main>
-
 
   <!-- ═══════════════════════════════════
        MODAIS / BOTTOM SHEETS
@@ -2320,19 +2241,19 @@ input[type="number"] { -moz-appearance: textfield; }
       <div class="calc-field">
         <span class="calc-field-label">Capital inicial</span>
         <input class="calc-field-input" id="cs-principal" type="number" min="0"
-               placeholder="1.000" inputmode="decimal">
+               placeholder="1.000" inputmode="decimal" oninput="calcCompute()">
         <span class="calc-field-suffix">R$</span>
       </div>
       <div class="calc-row">
         <div class="calc-field">
           <span class="calc-field-label">Taxa de juros</span>
           <input class="calc-field-input" id="cs-rate" type="number" min="0" step="0.01"
-                 placeholder="1,5" inputmode="decimal">
+                 placeholder="1,5" inputmode="decimal" oninput="calcCompute()">
           <span class="calc-field-suffix">%</span>
         </div>
         <div class="calc-field" style="max-width:130px">
           <span class="calc-field-label">Período</span>
-          <select class="calc-field-input" id="cs-period-type" style="padding-top:26px;font-size:14px">
+          <select class="calc-field-input" id="cs-period-type" style="padding-top:26px;font-size:14px" onchange="calcCompute()">
             <option value="month">Mês</option>
             <option value="year">Ano</option>
             <option value="day">Dia</option>
@@ -2342,7 +2263,7 @@ input[type="number"] { -moz-appearance: textfield; }
       <div class="calc-field">
         <span class="calc-field-label">Tempo</span>
         <input class="calc-field-input" id="cs-time" type="number" min="1"
-               placeholder="12" inputmode="numeric">
+               placeholder="12" inputmode="numeric" oninput="calcCompute()">
         <span class="calc-field-suffix" id="cs-time-suffix">meses</span>
       </div>
     </div>
@@ -2352,26 +2273,26 @@ input[type="number"] { -moz-appearance: textfield; }
       <div class="calc-field">
         <span class="calc-field-label">Capital inicial</span>
         <input class="calc-field-input" id="cc-principal" type="number" min="0"
-               placeholder="1.000" inputmode="decimal">
+               placeholder="1.000" inputmode="decimal" oninput="calcCompute()">
         <span class="calc-field-suffix">R$</span>
       </div>
       <div class="calc-field">
         <span class="calc-field-label">Aporte mensal (opcional)</span>
         <input class="calc-field-input" id="cc-monthly" type="number" min="0"
-               placeholder="0" inputmode="decimal">
+               placeholder="0" inputmode="decimal" oninput="calcCompute()">
         <span class="calc-field-suffix">R$</span>
       </div>
       <div class="calc-row">
         <div class="calc-field">
           <span class="calc-field-label">Taxa mensal</span>
           <input class="calc-field-input" id="cc-rate" type="number" min="0" step="0.01"
-                 placeholder="1,0" inputmode="decimal">
+                 placeholder="1,0" inputmode="decimal" oninput="calcCompute()">
           <span class="calc-field-suffix">% a.m.</span>
         </div>
         <div class="calc-field">
           <span class="calc-field-label">Meses</span>
           <input class="calc-field-input" id="cc-time" type="number" min="1"
-                 placeholder="24" inputmode="numeric">
+                 placeholder="24" inputmode="numeric" oninput="calcCompute()">
         </div>
       </div>
     </div>
@@ -2381,20 +2302,20 @@ input[type="number"] { -moz-appearance: textfield; }
       <div class="calc-field">
         <span class="calc-field-label">Valor financiado</span>
         <input class="calc-field-input" id="cp-principal" type="number" min="0"
-               placeholder="50.000" inputmode="decimal">
+               placeholder="50.000" inputmode="decimal" oninput="calcCompute()">
         <span class="calc-field-suffix">R$</span>
       </div>
       <div class="calc-row">
         <div class="calc-field">
           <span class="calc-field-label">Taxa mensal</span>
           <input class="calc-field-input" id="cp-rate" type="number" min="0" step="0.01"
-                 placeholder="1,5" inputmode="decimal">
+                 placeholder="1,5" inputmode="decimal" oninput="calcCompute()">
           <span class="calc-field-suffix">% a.m.</span>
         </div>
         <div class="calc-field">
           <span class="calc-field-label">Parcelas</span>
           <input class="calc-field-input" id="cp-time" type="number" min="1"
-                 placeholder="48" inputmode="numeric">
+                 placeholder="48" inputmode="numeric" oninput="calcCompute()">
         </div>
       </div>
     </div>
@@ -2476,129 +2397,264 @@ const UI = {
 </script>
 
 <!-- ═══════════════════════════════════════════
-     SEÇÃO 7 · STORE — Estado + localStorage
+     SEÇÃO 7 · STORE — Supabase + estado em memória
      ═══════════════════════════════════════════ -->
 <script>
-/* ─── Estrutura do Store ───
-   {
-     profile:      { name, email, initials, monthlyIncome? }
-     transactions: [ { id, type, icon, name, cat, amount, date(ISO), account, recurring, note? } ]
-     budgets:      [ { id, icon, cat, limit } ]
-     goals:        [ { id, icon, name, total, saved, deadline } ]
-     bills:        [ { id, icon, cat, name, amount, dueDay(1-28), recurring, paid } ]
-     creditCards:  [ { id, label, bank, colorClass, limit, dueDay, lastDigits } ]
-   }
-*/
+/* ────────────────────────────────────────────────────────────────
+   STORE v3 — Híbrido: memória (renders síncronos) + Supabase (persistência)
+   
+   Estratégia:
+   • Estado em memória (state) → usado por todos os renders (síncrono, rápido)
+   • Supabase → carregado no boot, persistido em background a cada mutação
+   • user_id injetado em todas as gravações via _currentUser
+   
+   Mapeamento de colunas (snake_case no Supabase, camelCase no app):
+   transactions: id, user_id, type, icon, name, cat, amount, date,
+                 account, recurring, note
+   budgets:      id, user_id, icon, cat, lim
+   goals:        id, user_id, icon, name, total, saved, deadline
+   bills:        id, user_id, icon, cat, name, amount, due_day,
+                 recurring, paid, bg
+   credit_cards: id, user_id, label, bank, color_class, lim,
+                 due_day, last_digits, account
+   profiles:     id (=user_id), name, email, initials, monthly_income
+────────────────────────────────────────────────────────────────── */
+
+let _currentUser = null; /* preenchido após login */
 
 const Store = (() => {
-  /* Dados padrão para novos usuários */
   const DEFAULT = {
-    profile: { name: '', email: '', initials: '?', monthlyIncome: 0 },
+    profile:      { name: '', email: '', initials: '?', monthlyIncome: 0 },
     transactions: [],
-    budgets: [],
-    goals: [],
-    bills: [],
-    creditCards: [], /* Populado pelo onboarding */
+    budgets:      [],
+    goals:        [],
+    bills:        [],
+    creditCards:  [],
   };
 
-  /* Carregar do localStorage */
-  function load() {
+  let state = { ...DEFAULT,
+    profile: { ...DEFAULT.profile },
+    transactions: [], budgets: [], goals: [], bills: [], creditCards: [],
+  };
+
+  /* ── Helpers de conversão Supabase ↔ app ── */
+  const toTx   = r => ({ id:r.id, type:r.type, icon:r.icon, name:r.name, cat:r.cat,
+                          amount:r.amount, date:r.date, account:r.account,
+                          recurring:!!r.recurring, note:r.note||'' });
+  const fromTx = (t,uid) => ({ id:t.id, user_id:uid, type:t.type, icon:t.icon,
+                                name:t.name, cat:t.cat, amount:t.amount, date:t.date,
+                                account:t.account||'', recurring:!!t.recurring, note:t.note||'' });
+
+  const toBudget   = r => ({ id:r.id, icon:r.icon, cat:r.cat, limit:r.lim });
+  const fromBudget = (b,uid) => ({ id:b.id, user_id:uid, icon:b.icon, cat:b.cat, lim:b.limit });
+
+  const toGoal   = r => ({ id:r.id, icon:r.icon, name:r.name, total:r.total,
+                            saved:r.saved, deadline:r.deadline||'' });
+  const fromGoal = (g,uid) => ({ id:g.id, user_id:uid, icon:g.icon, name:g.name,
+                                  total:g.total, saved:g.saved, deadline:g.deadline||'' });
+
+  const toBill   = r => ({ id:r.id, icon:r.icon, cat:r.cat, name:r.name, amount:r.amount,
+                            dueDay:r.due_day, recurring:!!r.recurring, paid:!!r.paid, bg:r.bg||'' });
+  const fromBill = (b,uid) => ({ id:b.id, user_id:uid, icon:b.icon, cat:b.cat, name:b.name,
+                                  amount:b.amount, due_day:b.dueDay, recurring:!!b.recurring,
+                                  paid:!!b.paid, bg:b.bg||'' });
+
+  const toCard   = r => ({ id:r.id, label:r.label, bank:r.bank, colorClass:r.color_class,
+                            limit:r.lim, dueDay:r.due_day, lastDigits:r.last_digits||'0000',
+                            account:r.account||'' });
+  const fromCard = (c,uid) => ({ id:c.id, user_id:uid, label:c.label, bank:c.bank||c.label,
+                                  color_class:c.colorClass, lim:c.limit, due_day:c.dueDay,
+                                  last_digits:c.lastDigits||'0000', account:c.account||'' });
+
+  const toProfile   = r => ({ name:r.name||'', email:r.email||'',
+                               initials:r.initials||'?', monthlyIncome:r.monthly_income||0 });
+  const fromProfile = (p,uid) => ({ id:uid, name:p.name, email:p.email||'',
+                                     initials:p.initials||'?', monthly_income:p.monthlyIncome||0 });
+
+  /* ── Carregar todos os dados do usuário do Supabase ── */
+  async function loadFromSupabase(uid) {
+    const db = window._supabase;
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const saved = JSON.parse(raw);
-        /* Merge profundo: garante que novas chaves do DEFAULT existam
-           mesmo em dados salvos de versões anteriores do app */
-        return {
-          ...DEFAULT,
-          ...saved,
-          profile:     { ...DEFAULT.profile,     ...(saved.profile     || {}) },
-          creditCards: saved.creditCards ?? DEFAULT.creditCards,
-          bills:       saved.bills       ?? DEFAULT.bills,
-          budgets:     saved.budgets     ?? DEFAULT.budgets,
-          goals:       saved.goals       ?? DEFAULT.goals,
-          transactions:saved.transactions ?? DEFAULT.transactions,
-        };
-      }
-    } catch(e) { console.warn('[Store] Erro ao carregar:', e); }
-    return { ...DEFAULT };
+      const [txRes, budRes, goalRes, billRes, cardRes, profRes] = await Promise.all([
+        db.from('transactions').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
+        db.from('budgets').select('*').eq('user_id', uid),
+        db.from('goals').select('*').eq('user_id', uid),
+        db.from('bills').select('*').eq('user_id', uid),
+        db.from('credit_cards').select('*').eq('user_id', uid),
+        db.from('profiles').select('*').eq('id', uid).single(),
+      ]);
+
+      state.transactions = (txRes.data   || []).map(toTx);
+      state.budgets      = (budRes.data   || []).map(toBudget);
+      state.goals        = (goalRes.data  || []).map(toGoal);
+      state.bills        = (billRes.data  || []).map(toBill);
+      state.creditCards  = (cardRes.data  || []).map(toCard);
+      state.profile      = profRes.data   ? toProfile(profRes.data) : { ...DEFAULT.profile };
+    } catch(e) {
+      console.warn('[Store] Erro ao carregar do Supabase:', e);
+    }
   }
 
-  /* Salvar no localStorage */
-  function save(data) {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
-    catch(e) { console.warn('[Store] Erro ao salvar:', e); }
+  /* ── bg helper ── */
+  async function supa(table, op, data, id) {
+    const db = window._supabase;
+    if (!_currentUser) return;
+    try {
+      if (op === 'upsert') await db.from(table).upsert(data);
+      if (op === 'delete') await db.from(table).delete().eq('id', id);
+    } catch(e) { console.warn(`[Store] ${table}.${op} erro:`, e); }
   }
-
-  /* Estado em memória */
-  let state = load();
 
   return {
-    /* Getters */
+    /* ── Getters (síncronos — usam estado em memória) ── */
     get profile()      { return state.profile; },
     get transactions() { return state.transactions; },
     get budgets()      { return state.budgets; },
     get goals()        { return state.goals; },
+    get bills()        { return state.bills || []; },
+    get creditCards()  { return state.creditCards || []; },
 
-    /* Transações */
-    addTx(tx)    { state.transactions.unshift(tx); save(state); },
+    /* ── Bootstrap: chamar após login ── */
+    async boot(user) {
+      _currentUser = user;
+      await loadFromSupabase(user.id);
+    },
+
+    /* ── TRANSAÇÕES ── */
+    addTx(tx) {
+      state.transactions.unshift(tx);
+      if (_currentUser) supa('transactions','upsert', fromTx(tx, _currentUser.id));
+    },
     updateTx(tx) {
       const i = state.transactions.findIndex(t => t.id === tx.id);
-      if (i !== -1) { state.transactions[i] = tx; save(state); }
+      if (i !== -1) { state.transactions[i] = tx; }
+      if (_currentUser) supa('transactions','upsert', fromTx(tx, _currentUser.id));
     },
-    getTx(id)    { return state.transactions.find(t => t.id === id) || null; },
-    deleteTx(id) { state.transactions = state.transactions.filter(t => t.id !== id); save(state); },
+    getTx(id) { return state.transactions.find(t => t.id === id) || null; },
+    deleteTx(id) {
+      state.transactions = state.transactions.filter(t => t.id !== id);
+      if (_currentUser) supa('transactions','delete', null, id);
+    },
 
-    /* Orçamentos */
-    addBudget(b)    { state.budgets.push(b); save(state); },
+    /* ── ORÇAMENTOS ── */
+    addBudget(b) {
+      state.budgets.push(b);
+      if (_currentUser) supa('budgets','upsert', fromBudget(b, _currentUser.id));
+    },
     updateBudget(b) {
       const i = state.budgets.findIndex(x => x.id === b.id);
-      if (i !== -1) { state.budgets[i] = b; save(state); }
+      if (i !== -1) state.budgets[i] = b;
+      if (_currentUser) supa('budgets','upsert', fromBudget(b, _currentUser.id));
     },
-    deleteBudget(id){ state.budgets = state.budgets.filter(x => x.id !== id); save(state); },
+    deleteBudget(id) {
+      state.budgets = state.budgets.filter(x => x.id !== id);
+      if (_currentUser) supa('budgets','delete', null, id);
+    },
 
-    /* Metas */
-    addGoal(g)    { state.goals.push(g); save(state); },
+    /* ── METAS ── */
+    addGoal(g) {
+      state.goals.push(g);
+      if (_currentUser) supa('goals','upsert', fromGoal(g, _currentUser.id));
+    },
     updateGoal(g) {
       const i = state.goals.findIndex(x => x.id === g.id);
-      if (i !== -1) { state.goals[i] = g; save(state); }
+      if (i !== -1) state.goals[i] = g;
+      if (_currentUser) supa('goals','upsert', fromGoal(g, _currentUser.id));
     },
-    deleteGoal(id){ state.goals = state.goals.filter(x => x.id !== id); save(state); },
+    deleteGoal(id) {
+      state.goals = state.goals.filter(x => x.id !== id);
+      if (_currentUser) supa('goals','delete', null, id);
+    },
 
-    /* Contas a pagar */
-    get bills()      { return state.bills || []; },
-    addBill(b)       { if (!state.bills) state.bills = []; state.bills.push(b); save(state); },
-    updateBill(b)    {
+    /* ── CONTAS A PAGAR ── */
+    addBill(b) {
+      if (!state.bills) state.bills = [];
+      state.bills.push(b);
+      if (_currentUser) supa('bills','upsert', fromBill(b, _currentUser.id));
+    },
+    updateBill(b) {
       if (!state.bills) state.bills = [];
       const i = state.bills.findIndex(x => x.id === b.id);
-      if (i !== -1) { state.bills[i] = b; save(state); }
+      if (i !== -1) state.bills[i] = b;
+      if (_currentUser) supa('bills','upsert', fromBill(b, _currentUser.id));
     },
-    deleteBill(id)   { state.bills = (state.bills || []).filter(x => x.id !== id); save(state); },
+    deleteBill(id) {
+      state.bills = (state.bills || []).filter(x => x.id !== id);
+      if (_currentUser) supa('bills','delete', null, id);
+    },
     toggleBillPaid(id) {
       const b = (state.bills || []).find(x => x.id === id);
-      if (b) { b.paid = !b.paid; save(state); }
+      if (b) {
+        b.paid = !b.paid;
+        if (_currentUser) supa('bills','upsert', fromBill(b, _currentUser.id));
+      }
     },
 
-    /* Cartões de crédito */
-    get creditCards()    { return state.creditCards || []; },
-    addCreditCard(c)     { if (!state.creditCards) state.creditCards = []; state.creditCards.push(c); save(state); },
-    updateCreditCard(c)  {
+    /* ── CARTÕES ── */
+    addCreditCard(c) {
+      if (!state.creditCards) state.creditCards = [];
+      state.creditCards.push(c);
+      if (_currentUser) supa('credit_cards','upsert', fromCard(c, _currentUser.id));
+    },
+    updateCreditCard(c) {
       if (!state.creditCards) state.creditCards = [];
       const i = state.creditCards.findIndex(x => x.id === c.id);
-      if (i !== -1) { state.creditCards[i] = c; save(state); }
+      if (i !== -1) state.creditCards[i] = c;
+      if (_currentUser) supa('credit_cards','upsert', fromCard(c, _currentUser.id));
     },
-    deleteCreditCard(id) { state.creditCards = (state.creditCards || []).filter(x => x.id !== id); save(state); },
+    deleteCreditCard(id) {
+      state.creditCards = (state.creditCards || []).filter(x => x.id !== id);
+      if (_currentUser) supa('credit_cards','delete', null, id);
+    },
 
-    /* Perfil */
-    updateProfile(p) { state.profile = { ...state.profile, ...p }; save(state); },
+    /* ── PERFIL ── */
+    updateProfile(p) {
+      state.profile = { ...state.profile, ...p };
+      if (_currentUser) supa('profiles','upsert', fromProfile(state.profile, _currentUser.id));
+    },
 
-    /* Utilitários */
-    clear()  { state = { ...DEFAULT }; save(state); },
-    export() { return JSON.stringify(state, null, 2); },
-    reload() {
-      /* Relê o localStorage e atualiza o estado em memória (usado após import) */
-      state = load();
+    /* ── UTILITÁRIOS ── */
+    async clear() {
+      if (!_currentUser) return;
+      const db = window._supabase;
+      const uid = _currentUser.id;
+      await Promise.all([
+        db.from('transactions').delete().eq('user_id', uid),
+        db.from('budgets').delete().eq('user_id', uid),
+        db.from('goals').delete().eq('user_id', uid),
+        db.from('bills').delete().eq('user_id', uid),
+        db.from('credit_cards').delete().eq('user_id', uid),
+      ]);
+      state = { ...DEFAULT, profile: { ...DEFAULT.profile },
+                transactions:[], budgets:[], goals:[], bills:[], creditCards:[] };
+    },
+
+    export() {
+      return JSON.stringify({
+        profile: state.profile,
+        transactions: state.transactions,
+        budgets: state.budgets,
+        goals: state.goals,
+        bills: state.bills,
+        creditCards: state.creditCards,
+      }, null, 2);
+    },
+
+    async reload() {
+      if (_currentUser) await loadFromSupabase(_currentUser.id);
       return state;
+    },
+
+    /* Estado bruto para import */
+    _setState(newState) {
+      state = { ...DEFAULT, ...newState,
+        profile: { ...DEFAULT.profile, ...(newState.profile || {}) },
+        transactions: newState.transactions || [],
+        budgets:      newState.budgets      || [],
+        goals:        newState.goals        || [],
+        bills:        newState.bills        || [],
+        creditCards:  newState.creditCards  || [],
+      };
     },
   };
 })();
@@ -3150,10 +3206,36 @@ function renderScore() {
     ? `${Store.bills.filter(b=>b.paid).length}/${Store.bills.length} pagas`
     : '<span style="color:var(--green);cursor:pointer;font-weight:600" onclick="openSheet(\'bill\')">+ Adicionar</span>';
 
+  /* Contexto de confiabilidade do score */
+  const txCount    = txs.length;
+  const hasProfile = Store.profile.monthlyIncome > 0;
+  const dataQuality =
+    txCount === 0                        ? 'empty'   :  /* sem nenhuma transação */
+    txCount < 3 && !hasProfile           ? 'low'     :  /* poucos dados */
+    txCount < 10 && !hasProfile          ? 'medium'  :  /* dados parciais */
+                                           'good';       /* dados suficientes */
+
   const desc = score>=80 ? 'Suas finanças estão sob controle!'
              : score>=60 ? 'Você está no caminho certo.'
              : score>=40 ? 'Há pontos para melhorar.'
              : 'Atenção: revise seus gastos.';
+
+  /* Mensagem contextual por qualidade dos dados */
+  const qualityBanner = {
+    empty:  `<div class="score-context score-context-low">
+               <span>📊</span>
+               <span>Adicione transações para um score mais preciso. Este é um score inicial estimado.</span>
+             </div>`,
+    low:    `<div class="score-context score-context-low">
+               <span>📈</span>
+               <span>Poucas transações registradas — continue adicionando para maior precisão.</span>
+             </div>`,
+    medium: `<div class="score-context score-context-ok">
+               <span>💡</span>
+               <span>Declare sua renda mensal no perfil para um score ainda mais preciso.</span>
+             </div>`,
+    good:   '',
+  }[dataQuality];
 
   const fc = v => v >= 18 ? 'var(--green)' : v >= 10 ? 'var(--yellow)' : 'var(--red)';
   const incomeSrc = declaredIncome > 0
@@ -3163,6 +3245,7 @@ function renderScore() {
     : '';
 
   wrap.innerHTML = `<div class="score-card">
+    ${qualityBanner}
     <div class="score-header">
       <span class="score-label">🏅 Score Financeiro</span>
       <span class="score-badge ${bCls}">${lbl}</span>
@@ -3846,6 +3929,10 @@ function saveTx() {
   if (!name || name.length < 2)                   { showToast('⚠️ Descrição muito curta'); return; }
   if (name.length > 80)                           { showToast('⚠️ Descrição muito longa (máx. 80 chars)'); return; }
   if (!date)                                      { showToast('⚠️ Informe a data'); return; }
+  /* Rejeitar datas muito no futuro (> 1 ano) — provavelmente erro de digitação */
+  const txDate    = new Date(date + 'T12:00:00');
+  const maxFuture = new Date(); maxFuture.setFullYear(maxFuture.getFullYear() + 1);
+  if (txDate > maxFuture) { showToast('⚠️ Data muito no futuro — verifique'); return; }
 
   const note = (document.getElementById('inp-note')?.value || '').trim().slice(0, 120);
   const tx = {
@@ -4465,17 +4552,34 @@ async function handleImportFile(e) {
     });
     if (!ok) return;
 
-    /* Aplicar import via Store — usa o mesmo merge profundo do load() */
+    /* Aplicar import: setar estado em memória e sincronizar com Supabase */
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
-      /* Recarregar o estado do Store */
-      const newState = Store.reload();
+      Store._setState(parsed);
+
+      /* Sincronizar tudo com Supabase em background */
+      if (_currentUser) {
+        const uid = _currentUser.id;
+        const db  = window._supabase;
+        /* Limpar dados existentes primeiro */
+        await Promise.all([
+          db.from('transactions').delete().eq('user_id', uid),
+          db.from('budgets').delete().eq('user_id', uid),
+          db.from('goals').delete().eq('user_id', uid),
+          db.from('bills').delete().eq('user_id', uid),
+          db.from('credit_cards').delete().eq('user_id', uid),
+        ]);
+        /* Reinserir via Store (dispara upsert em background) */
+        Store.transactions.forEach(t => Store.addTx(t));
+        Store.budgets.forEach(b => Store.addBudget(b));
+        Store.goals.forEach(g => Store.addGoal(g));
+        Store.bills.forEach(b => Store.addBill(b));
+        Store.creditCards.forEach(c => Store.addCreditCard(c));
+        if (parsed.profile) Store.updateProfile(parsed.profile);
+      }
+
       renderAll();
       showToast(`✅ ${txCount} transações importadas`);
-      /* Marcar onboarding como concluído se o perfil tiver nome */
-      if (parsed.profile?.name) {
-        localStorage.setItem('fluxo_onboarded', '1');
-      }
+      if (parsed.profile?.name) localStorage.setItem('fluxo_onboarded', '1');
     } catch (err) {
       showToast('❌ Erro ao importar: ' + err.message);
     }
@@ -4504,7 +4608,7 @@ async function confirmClearData() {
     okLabel: 'Apagar tudo',
   });
   if (!ok) return;
-  Store.clear();
+  await Store.clear();
   showToast('🗑 Dados apagados');
   renderAll();
 }
@@ -4515,6 +4619,163 @@ async function confirmClearData() {
      ═══════════════════════════════════ -->
 <script>
 /* ════════════════════════════════════════════
+   AUTENTICAÇÃO — Supabase Auth
+   ════════════════════════════════════════════ */
+
+const AUTH = { tab: 'login' };
+
+function authSwitchTab(tab) {
+  AUTH.tab = tab;
+  document.getElementById('atab-login').classList.toggle('active',    tab === 'login');
+  document.getElementById('atab-register').classList.toggle('active', tab === 'register');
+  document.getElementById('auth-name-group').style.display    = tab === 'register' ? 'block' : 'none';
+  document.getElementById('auth-confirm-group').style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('auth-forgot').style.display        = tab === 'login'    ? 'block' : 'none';
+  document.getElementById('auth-submit-btn').textContent      = tab === 'login' ? 'Entrar' : 'Criar conta';
+  authClearError();
+}
+
+function authTogglePass() {
+  const inp = document.getElementById('auth-password');
+  const btn = document.getElementById('auth-eye');
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  btn.textContent = show ? '🙈' : '👁';
+}
+
+function authShowError(msg) {
+  const el = document.getElementById('auth-error');
+  el.textContent = msg; el.style.display = 'block';
+}
+function authClearError() {
+  const el = document.getElementById('auth-error');
+  if (el) { el.textContent = ''; el.style.display = 'none'; }
+}
+
+async function authSubmit() {
+  const email    = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const btn      = document.getElementById('auth-submit-btn');
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    authShowError('E-mail inválido'); return;
+  }
+  if (password.length < 6) {
+    authShowError('Senha deve ter pelo menos 6 caracteres'); return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '…';
+  authClearError();
+
+  const db = window._supabase;
+
+  if (AUTH.tab === 'login') {
+    const { data, error } = await db.auth.signInWithPassword({ email, password });
+    if (error) {
+      authShowError(
+        error.message.includes('Invalid') ? 'E-mail ou senha incorretos' :
+        error.message.includes('Email not confirmed') ? 'Confirme seu e-mail antes de entrar' :
+        error.message
+      );
+      btn.disabled = false; btn.textContent = 'Entrar'; return;
+    }
+    await authOnLogin(data.user);
+
+  } else {
+    const name    = (document.getElementById('auth-name').value || '').trim();
+    const confirm = document.getElementById('auth-confirm').value;
+    if (!name || name.length < 2) { authShowError('Informe seu nome'); btn.disabled=false; btn.textContent='Criar conta'; return; }
+    if (password !== confirm)      { authShowError('As senhas não coincidem'); btn.disabled=false; btn.textContent='Criar conta'; return; }
+
+    const { data, error } = await db.auth.signUp({ email, password });
+    if (error) {
+      authShowError(error.message.includes('already') ? 'Este e-mail já está cadastrado' : error.message);
+      btn.disabled = false; btn.textContent = 'Criar conta'; return;
+    }
+
+    /* Criar perfil inicial */
+    if (data.user) {
+      await db.from('profiles').upsert({
+        id: data.user.id, name, email,
+        initials: Utils.initials(name), monthly_income: 0,
+      });
+      await authOnLogin(data.user, name);
+    } else {
+      /* Supabase exige confirmação de e-mail */
+      authShowError('');
+      document.getElementById('auth-submit-btn').textContent = '✅ Verifique seu e-mail!';
+      showToast('📧 Confirme seu e-mail para ativar a conta');
+    }
+  }
+}
+
+async function authOnLogin(user, nameHint) {
+  _currentUser = user;
+  await Store.boot(user);
+
+  /* Se novo usuário sem perfil, criar com nome do cadastro */
+  if (nameHint && !Store.profile.name) {
+    Store.updateProfile({
+      name: nameHint,
+      initials: Utils.initials(nameHint),
+      email: user.email,
+    });
+  }
+
+  /* Ocultar tela de auth, mostrar app */
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+
+  applyTheme(localStorage.getItem('fluxo_theme') || 'dark');
+  renderAll();
+
+  /* Mostrar onboarding se perfil sem nome */
+  if (!Store.profile.name) {
+    setTimeout(() => obShow(), 150);
+  } else {
+    localStorage.setItem('fluxo_onboarded', '1');
+  }
+
+  /* Dica de swipe */
+  if (!localStorage.getItem('fluxo_swipe_hint')) {
+    setTimeout(() => {
+      showToast('👆 Dica: deslize uma transação para excluir');
+      localStorage.setItem('fluxo_swipe_hint', '1');
+    }, 3000);
+  }
+}
+
+async function authForgotPassword() {
+  const email = document.getElementById('auth-email').value.trim();
+  if (!email) { authShowError('Informe seu e-mail primeiro'); return; }
+  const { error } = await window._supabase.auth.resetPasswordForEmail(email);
+  if (error) { authShowError(error.message); return; }
+  showToast('📧 Link de redefinição enviado para ' + email);
+}
+
+/* Botão de logout — adicionado dinamicamente no Perfil */
+async function logout() {
+  const ok = await showConfirm({
+    icon: '🚪', title: 'Sair da conta?',
+    desc: 'Seus dados ficam salvos na nuvem.', okLabel: 'Sair',
+  });
+  if (!ok) return;
+  await window._supabase.auth.signOut();
+  _currentUser = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+  /* Limpar estado em memória */
+  await Store.boot({ id: null });
+}
+
+/* ════════════════════════════════════════════
+   CALCULADORA DE JUROS (mantida intacta)
+   ════════════════════════════════════════════ */
+</script>
+
+<script>
+/* ════════════════════════════════════════════
    CALCULADORA DE JUROS
    ════════════════════════════════════════════ */
 
@@ -4522,39 +4783,20 @@ const CALC = { mode: 'simple' };
 
 function calcSetMode(mode) {
   CALC.mode = mode;
-  ['simple','compound','price','rentab'].forEach(m => {
-    const btn = document.getElementById('cmode-' + m);
-    const panel = document.getElementById('calc-panel-' + m);
-    if (btn)   btn.classList.toggle('active', m === mode);
-    if (panel) panel.style.display = m === mode ? 'block' : 'none';
+  ['simple','compound','price'].forEach(m => {
+    document.getElementById(`cmode-${m}`).classList.toggle('active', m === mode);
+    document.getElementById(`calc-panel-${m}`).style.display = m === mode ? 'block' : 'none';
   });
-  document.getElementById('calc-result-card').style.display = 'none';
-  document.getElementById('calc-timeline').style.display    = 'none';
-  const tip = document.getElementById('calc-tip');
-  if (tip) { tip.textContent = 'Preencha os campos e toque em Calcular'; tip.style.color = ''; }
-}
-
-function calcReset() {
-  /* Limpa todos os inputs da calculadora */
-  ['cs-principal','cs-rate','cs-time',
-   'cc-principal','cc-monthly','cc-rate','cc-time',
-   'cp-principal','cp-rate','cp-time',
-   'cr-initial','cr-final','cr-time'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el && el.tagName === 'INPUT') el.value = '';
-  });
-  document.getElementById('calc-result-card').style.display = 'none';
-  document.getElementById('calc-timeline').style.display    = 'none';
-  const tip = document.getElementById('calc-tip');
-  if (tip) { tip.textContent = 'Preencha os campos e toque em Calcular'; tip.style.color = ''; }
-  showToast('↺ Campos limpos');
+  /* Esconder resultado ao trocar modo */
+  document.getElementById('calc-result-card').style.display  = 'none';
+  document.getElementById('calc-timeline').style.display     = 'none';
+  document.getElementById('calc-tip').textContent = 'Preencha os campos acima e toque em Calcular';
 }
 
 function calcCompute() {
   if (CALC.mode === 'simple')   return calcSimple();
   if (CALC.mode === 'compound') return calcCompound();
   if (CALC.mode === 'price')    return calcPrice();
-  if (CALC.mode === 'rentab')   return calcRentab();
 }
 
 /* ── Juros Simples: M = P * (1 + r * t) ── */
@@ -4564,7 +4806,7 @@ function calcSimple() {
   const t    = parseInt(document.getElementById('cs-time').value)        || 0;
   const type = document.getElementById('cs-period-type').value;
 
-  if (!P || !r || !t) { showToast('⚠️ Preencha todos os campos'); return; }
+  if (!P || !r || !t) { return; }
 
   /* Atualizar label de tempo */
   const labels = { month: 'meses', year: 'anos', day: 'dias' };
@@ -4597,7 +4839,7 @@ function calcCompound() {
   const r       = parseFloat(document.getElementById('cc-rate').value)      || 0;
   const t       = parseInt(document.getElementById('cc-time').value)        || 0;
 
-  if (!P || !r || !t) { showToast('⚠️ Preencha capital, taxa e meses'); return; }
+  if (!P || !r || !t) { return; }
 
   const rDecimal = r / 100;
   const series   = [];
@@ -4631,7 +4873,7 @@ function calcPrice() {
   const r  = parseFloat(document.getElementById('cp-rate').value)      || 0;
   const n  = parseInt(document.getElementById('cp-time').value)        || 0;
 
-  if (!PV || !r || !n) { showToast('⚠️ Preencha todos os campos'); return; }
+  if (!PV || !r || !n) { return; }
 
   const rDecimal = r / 100;
   const pmt      = PV * (rDecimal * Math.pow(1 + rDecimal, n)) / (Math.pow(1 + rDecimal, n) - 1);
@@ -4674,7 +4916,7 @@ function calcShowResult({ label, total, items, series, tip, seriesLabel, invertS
   document.getElementById('calc-result-breakdown').innerHTML = items.map(it => `
     <div class="calc-result-item">
       <div class="calc-result-item-label">${it.label}</div>
-      <div class="calc-result-item-val ${it.cls || ''}" style="${it.color ? 'color:' + it.color : ''}">${it.val}</div>
+      <div class="calc-result-item-val" style="${it.color ? 'color:' + it.color : ''}">${it.val}</div>
     </div>`).join('');
 
   card.style.display = 'block';
@@ -4717,41 +4959,6 @@ function calcShowResult({ label, total, items, series, tip, seriesLabel, invertS
 
   /* Scroll suave para ver o resultado */
   setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
-}
-
-/* ── Rentabilidade: descobre a taxa de um investimento ── */
-function calcRentab() {
-  const VI = parseFloat(document.getElementById('cr-initial').value) || 0;
-  const VF = parseFloat(document.getElementById('cr-final').value)   || 0;
-  const n  = parseInt(document.getElementById('cr-time').value)      || 0;
-
-  if (!VI || !VF || !n) { showToast('⚠️ Preencha todos os campos'); return; }
-  if (VF <= 0 || VI <= 0) { showToast('⚠️ Valores devem ser positivos'); return; }
-
-  /* Taxa mensal equivalente */
-  const rateMensal = Math.pow(VF / VI, 1 / n) - 1;
-  const rateAnual  = Math.pow(1 + rateMensal, 12) - 1;
-  const ganho      = VF - VI;
-  const ganhoTotal = ((VF / VI - 1) * 100);
-
-  /* Série para timeline */
-  const series = Array.from({ length: n }, (_, i) => VI * Math.pow(1 + rateMensal, i + 1));
-
-  calcShowResult({
-    label: 'TAXA DE RENTABILIDADE',
-    total: VF,
-    totalLabel: 'VALOR FINAL',
-    items: [
-      { label: 'TAXA MENSAL',  val: rateMensal.toFixed(4).replace('.',',') + '%', cls: ganho >= 0 ? 'pos' : 'neg' },
-      { label: 'TAXA ANUAL',   val: (rateAnual * 100).toFixed(2).replace('.',',') + '%', cls: ganho >= 0 ? 'pos' : 'neg' },
-      { label: 'GANHO TOTAL',  val: ganhoTotal.toFixed(1).replace('.',',') + '%', cls: ganho >= 0 ? 'pos' : 'neg' },
-    ],
-    series,
-    tip: ganho >= 0
-      ? `Esse investimento rendeu ${Utils.brl(ganho)} (+${ganhoTotal.toFixed(1)}%) em ${n} meses.`
-      : `Esse investimento teve perda de ${Utils.brl(Math.abs(ganho))} (${ganhoTotal.toFixed(1)}%) em ${n} meses.`,
-    seriesLabel: 'EVOLUÇÃO DO CAPITAL',
-  });
 }
 
 /* Listener: atualizar suffix de tempo no modo simples */
@@ -4887,8 +5094,44 @@ function obUpdateIncomeHint() {
 
 
 <script>
-(function init() {
+/* ═══════════════════════════════════════════
+   INIT — Bootstrap com Supabase Auth
+   ═══════════════════════════════════════════ */
+(async function init() {
   'use strict';
+
+  /* Ocultar app até confirmar sessão */
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+
+  /* Restaura tema salvo (antes do login para não piscar) */
+  try {
+    applyTheme(localStorage.getItem('fluxo_theme') || 'dark');
+  } catch(e) { applyTheme('dark'); }
+
+  /* Verificar sessão existente do Supabase */
+  const db = window._supabase;
+  const { data: { session } } = await db.auth.getSession();
+
+  if (session?.user) {
+    /* Sessão ativa — entrar direto */
+    await authOnLogin(session.user);
+  } else {
+    /* Sem sessão — mostrar tela de auth */
+    document.getElementById('auth-screen').style.display = 'flex';
+  }
+
+  /* Escutar mudanças de sessão (ex: logout em outra aba) */
+  db.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_OUT') {
+      _currentUser = null;
+      document.getElementById('app').style.display = 'none';
+      document.getElementById('auth-screen').style.display = 'flex';
+    }
+    if (event === 'SIGNED_IN' && session?.user && !_currentUser) {
+      await authOnLogin(session.user);
+    }
+  });
 
   /* Search: conectar com debounce (280ms) */
   const searchEl = document.getElementById('search-input');
