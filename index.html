@@ -1438,7 +1438,7 @@ input[type="number"] { -moz-appearance: textfield; }
     ───────────────────────────────────────────────────────────── */
     const SUPA_URL = 'https://egwgdobdiopanllhvsyy.supabase.co';
 const SUPA_KEY = 'sb_publishable_oHl0-u-N_ELgmbdNE4B0nQ_3cRvRdXO';
- 
+  
     const _supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
     window._supabase = _supabase;
   </script>
@@ -1891,6 +1891,166 @@ const SUPA_KEY = 'sb_publishable_oHl0-u-N_ELgmbdNE4B0nQ_3cRvRdXO';
         <div class="settings-item" onclick="logout()"><div class="settings-icon">🚪</div><span class="settings-label" style="color:var(--red)">Sair da conta</span><span class="settings-arrow">›</span></div>
       </div>
       <div style="height:8px"></div>
+    </div>
+  </main>
+
+  <!-- ───────── TELA: CALCULADORA DE JUROS ───────── -->
+  <main class="screen" id="screen-calc" role="main" aria-label="Calculadora de Juros">
+    <div class="header">
+      <div class="header-title">Juros &amp; Simulações</div>
+      <div class="header-right">
+        <div class="icon-btn" onclick="calcReset()" aria-label="Limpar" title="Limpar campos">↺</div>
+      </div>
+    </div>
+    <div class="scroll-area" style="padding:16px 16px 40px">
+
+      <!-- Tabs de modo -->
+      <div class="calc-modes" role="tablist" aria-label="Modo de cálculo">
+        <div class="calc-mode-btn active" id="cmode-simple"   onclick="calcSetMode('simple')"   role="tab">Simples</div>
+        <div class="calc-mode-btn"        id="cmode-compound" onclick="calcSetMode('compound')" role="tab">Composto</div>
+        <div class="calc-mode-btn"        id="cmode-price"    onclick="calcSetMode('price')"    role="tab">Parcela</div>
+        <div class="calc-mode-btn"        id="cmode-rentab"   onclick="calcSetMode('rentab')"   role="tab">Rentabilidade</div>
+      </div>
+
+      <!-- Resultado (oculto até calcular) -->
+      <div class="calc-result-card" id="calc-result-card" style="display:none">
+        <div class="calc-result-label" id="calc-result-label">MONTANTE TOTAL</div>
+        <div class="calc-result-value" id="calc-result-value">R$ 0,00</div>
+        <div class="calc-result-breakdown" id="calc-result-breakdown"></div>
+      </div>
+
+      <!-- Gráfico de evolução -->
+      <div class="calc-timeline" id="calc-timeline" style="display:none">
+        <div class="calc-timeline-title" id="calc-tl-title">EVOLUÇÃO AO LONGO DO TEMPO</div>
+        <div class="calc-timeline-bars" id="calc-timeline-bars"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:6px">
+          <span style="font-size:9px;color:var(--text3)" id="calc-tl-start">Início</span>
+          <span style="font-size:9px;color:var(--text3)" id="calc-tl-end">Fim</span>
+        </div>
+      </div>
+
+      <!-- ── SIMPLES ── -->
+      <div id="calc-panel-simple">
+        <div class="calc-section-title">💰 Juros Simples</div>
+        <div class="calc-field">
+          <div class="calc-field-label">CAPITAL INICIAL</div>
+          <input class="calc-field-input" id="cs-principal" type="number" min="0"
+                 placeholder="1.000" inputmode="decimal" oninput="calcCompute()">
+          <div class="calc-field-suffix">R$</div>
+        </div>
+        <div class="calc-row">
+          <div class="calc-field">
+            <div class="calc-field-label">TAXA DE JUROS</div>
+            <input class="calc-field-input" id="cs-rate" type="number" min="0" step="0.01"
+                   placeholder="1,5" inputmode="decimal" oninput="calcCompute()">
+            <div class="calc-field-suffix">%</div>
+          </div>
+          <div class="calc-field">
+            <div class="calc-field-label">PERÍODO</div>
+            <select class="calc-field-input" id="cs-period-type"
+                    style="padding-top:26px;font-size:14px" onchange="calcCompute()">
+              <option value="month">Mensal</option>
+              <option value="year">Anual</option>
+              <option value="day">Diário</option>
+            </select>
+          </div>
+        </div>
+        <div class="calc-field">
+          <div class="calc-field-label">TEMPO</div>
+          <input class="calc-field-input" id="cs-time" type="number" min="1"
+                 placeholder="12" inputmode="numeric" oninput="calcCompute()">
+          <div class="calc-field-suffix" id="cs-time-suffix">meses</div>
+        </div>
+        <div class="calc-formula-tip">J = C × i × t &nbsp;·&nbsp; Rendimento linear sem capitalização</div>
+      </div>
+
+      <!-- ── COMPOSTO ── -->
+      <div id="calc-panel-compound" style="display:none">
+        <div class="calc-section-title">📈 Juros Compostos</div>
+        <div class="calc-field">
+          <div class="calc-field-label">CAPITAL INICIAL</div>
+          <input class="calc-field-input" id="cc-principal" type="number" min="0"
+                 placeholder="1.000" inputmode="decimal" oninput="calcCompute()">
+          <div class="calc-field-suffix">R$</div>
+        </div>
+        <div class="calc-field">
+          <div class="calc-field-label">APORTE MENSAL (opcional)</div>
+          <input class="calc-field-input" id="cc-monthly" type="number" min="0"
+                 placeholder="0" inputmode="decimal" oninput="calcCompute()">
+          <div class="calc-field-suffix">R$</div>
+        </div>
+        <div class="calc-row">
+          <div class="calc-field">
+            <div class="calc-field-label">TAXA MENSAL</div>
+            <input class="calc-field-input" id="cc-rate" type="number" min="0" step="0.01"
+                   placeholder="1,0" inputmode="decimal" oninput="calcCompute()">
+            <div class="calc-field-suffix">% a.m.</div>
+          </div>
+          <div class="calc-field">
+            <div class="calc-field-label">MESES</div>
+            <input class="calc-field-input" id="cc-time" type="number" min="1"
+                   placeholder="24" inputmode="numeric" oninput="calcCompute()">
+            <div class="calc-field-suffix">m</div>
+          </div>
+        </div>
+        <div class="calc-formula-tip">M = C × (1+i)ⁿ &nbsp;·&nbsp; Juros sobre juros, efeito exponencial</div>
+      </div>
+
+      <!-- ── PARCELA (Price) ── -->
+      <div id="calc-panel-price" style="display:none">
+        <div class="calc-section-title">💳 Financiamento (Tabela Price)</div>
+        <div class="calc-field">
+          <div class="calc-field-label">VALOR FINANCIADO</div>
+          <input class="calc-field-input" id="cp-principal" type="number" min="0"
+                 placeholder="50.000" inputmode="decimal" oninput="calcCompute()">
+          <div class="calc-field-suffix">R$</div>
+        </div>
+        <div class="calc-row">
+          <div class="calc-field">
+            <div class="calc-field-label">TAXA MENSAL</div>
+            <input class="calc-field-input" id="cp-rate" type="number" min="0" step="0.01"
+                   placeholder="1,5" inputmode="decimal" oninput="calcCompute()">
+            <div class="calc-field-suffix">% a.m.</div>
+          </div>
+          <div class="calc-field">
+            <div class="calc-field-label">PARCELAS</div>
+            <input class="calc-field-input" id="cp-time" type="number" min="1"
+                   placeholder="48" inputmode="numeric" oninput="calcCompute()">
+            <div class="calc-field-suffix">×</div>
+          </div>
+        </div>
+        <div class="calc-formula-tip">PMT = PV × [i(1+i)ⁿ / ((1+i)ⁿ−1)] &nbsp;·&nbsp; Parcelas fixas mensais</div>
+      </div>
+
+      <!-- ── RENTABILIDADE ── -->
+      <div id="calc-panel-rentab" style="display:none">
+        <div class="calc-section-title">🔍 Rentabilidade Real</div>
+        <div class="calc-row">
+          <div class="calc-field">
+            <div class="calc-field-label">VALOR INICIAL</div>
+            <input class="calc-field-input" id="cr-initial" type="number" min="0"
+                   placeholder="1.000" inputmode="decimal" oninput="calcCompute()">
+            <div class="calc-field-suffix">R$</div>
+          </div>
+          <div class="calc-field">
+            <div class="calc-field-label">VALOR FINAL</div>
+            <input class="calc-field-input" id="cr-final" type="number" min="0"
+                   placeholder="1.500" inputmode="decimal" oninput="calcCompute()">
+            <div class="calc-field-suffix">R$</div>
+          </div>
+        </div>
+        <div class="calc-field">
+          <div class="calc-field-label">PERÍODO (meses)</div>
+          <input class="calc-field-input" id="cr-time" type="number" min="1"
+                 placeholder="12" inputmode="numeric" oninput="calcCompute()">
+          <div class="calc-field-suffix">m</div>
+        </div>
+        <div class="calc-formula-tip">i = (VF/VI)^(1/n) − 1 &nbsp;·&nbsp; Descubra a taxa de qualquer investimento</div>
+      </div>
+
+      <button class="calc-btn" onclick="calcCompute()">Calcular →</button>
+      <div class="calc-tip" id="calc-tip">O resultado atualiza automaticamente conforme você digita</div>
+
     </div>
   </main>
 
@@ -3707,6 +3867,7 @@ function goTo(screen) {
     renderProfile(); renderProfileStats();
   }
   if (screen === 'cards') { renderCards(); }
+  if (screen === 'calc')  { /* calculadora não precisa de render — é estática */ }
 }
 
 /* ─── Período (Stats) ─── */
@@ -4819,6 +4980,51 @@ function calcCompute() {
   if (CALC.mode === 'simple')   return calcSimple();
   if (CALC.mode === 'compound') return calcCompound();
   if (CALC.mode === 'price')    return calcPrice();
+  if (CALC.mode === 'rentab')   return calcRentab();
+}
+
+function calcReset() {
+  ['cs-principal','cs-rate','cs-time',
+   'cc-principal','cc-monthly','cc-rate','cc-time',
+   'cp-principal','cp-rate','cp-time',
+   'cr-initial','cr-final','cr-time'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.tagName === 'INPUT') el.value = '';
+  });
+  document.getElementById('calc-result-card').style.display = 'none';
+  document.getElementById('calc-timeline').style.display    = 'none';
+  const tip = document.getElementById('calc-tip');
+  if (tip) { tip.textContent = 'O resultado atualiza automaticamente conforme você digita'; tip.style.color = ''; }
+  showToast('↺ Campos limpos');
+}
+
+function calcRentab() {
+  const VI = parseFloat(document.getElementById('cr-initial').value) || 0;
+  const VF = parseFloat(document.getElementById('cr-final').value)   || 0;
+  const n  = parseInt(document.getElementById('cr-time').value)      || 0;
+  if (!VI || !VF || !n) { return; }
+  if (VF <= 0 || VI <= 0) { return; }
+
+  const rateMensal = Math.pow(VF / VI, 1 / n) - 1;
+  const rateAnual  = Math.pow(1 + rateMensal, 12) - 1;
+  const ganho      = VF - VI;
+  const ganhoTotal = ((VF / VI - 1) * 100);
+  const series     = Array.from({ length: n }, (_, i) => VI * Math.pow(1 + rateMensal, i + 1));
+
+  calcShowResult({
+    label: 'TAXA DE RENTABILIDADE',
+    total: VF,
+    items: [
+      { label: 'TAXA MENSAL', val: rateMensal.toFixed(4).replace('.',',') + '%', cls: ganho >= 0 ? 'pos' : 'neg' },
+      { label: 'TAXA ANUAL',  val: (rateAnual * 100).toFixed(2).replace('.',',') + '%', cls: ganho >= 0 ? 'pos' : 'neg' },
+      { label: 'GANHO TOTAL', val: ganhoTotal.toFixed(1).replace('.',',') + '%', cls: ganho >= 0 ? 'pos' : 'neg' },
+    ],
+    series,
+    tip: ganho >= 0
+      ? `Esse investimento rendeu ${Utils.brl(ganho)} (+${ganhoTotal.toFixed(1)}%) em ${n} meses.`
+      : `Esse investimento teve perda de ${Utils.brl(Math.abs(ganho))} (${ganhoTotal.toFixed(1)}%) em ${n} meses.`,
+    seriesLabel: 'EVOLUÇÃO DO CAPITAL',
+  });
 }
 
 /* ── Juros Simples: M = P * (1 + r * t) ── */
