@@ -1458,7 +1458,7 @@ input[type="number"] { -moz-appearance: textfield; }
     ───────────────────────────────────────────────────────────── */
     const SUPA_URL = 'https://egwgdobdiopanllhvsyy.supabase.co';
 const SUPA_KEY = 'sb_publishable_oHl0-u-N_ELgmbdNE4B0nQ_3cRvRdXO';
-   
+    
     const _supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
     window._supabase = _supabase;
   </script>
@@ -1917,7 +1917,7 @@ const SUPA_KEY = 'sb_publishable_oHl0-u-N_ELgmbdNE4B0nQ_3cRvRdXO';
   <!-- ───────── TELA: CALCULADORA DE JUROS ───────── -->
   <main class="screen" id="screen-calc" role="main" aria-label="Calculadora de Juros">
     <div class="header">
-      <div class="header-title">Juros &amp; Simulações</div>
+      <div class="header-title" style="font-size:17px;white-space:nowrap">🧮 Calculadora de Juros</div>
       <div class="header-right">
         <div class="icon-btn" onclick="calcReset()" aria-label="Limpar" title="Limpar campos">↺</div>
       </div>
@@ -1955,14 +1955,14 @@ const SUPA_KEY = 'sb_publishable_oHl0-u-N_ELgmbdNE4B0nQ_3cRvRdXO';
         <div class="calc-field">
           <div class="calc-field-label">CAPITAL INICIAL</div>
           <input class="calc-field-input" id="cs-principal" type="number" min="0"
-                 placeholder="1.000" inputmode="decimal" oninput="calcCompute()">
+                 placeholder="Ex: 1000" inputmode="decimal" oninput="calcCompute()">
           <div class="calc-field-suffix">R$</div>
         </div>
         <div class="calc-row">
           <div class="calc-field">
             <div class="calc-field-label">TAXA DE JUROS</div>
             <input class="calc-field-input" id="cs-rate" type="number" min="0" step="0.01"
-                   placeholder="1,5" inputmode="decimal" oninput="calcCompute()">
+                   placeholder="Ex: 1,5" inputmode="decimal" oninput="calcCompute()">
             <div class="calc-field-suffix">%</div>
           </div>
           <div class="calc-field">
@@ -1978,7 +1978,7 @@ const SUPA_KEY = 'sb_publishable_oHl0-u-N_ELgmbdNE4B0nQ_3cRvRdXO';
         <div class="calc-field">
           <div class="calc-field-label">TEMPO</div>
           <input class="calc-field-input" id="cs-time" type="number" min="1"
-                 placeholder="12" inputmode="numeric" oninput="calcCompute()">
+                 placeholder="Ex: 12" inputmode="numeric" oninput="calcCompute()">
           <div class="calc-field-suffix" id="cs-time-suffix">meses</div>
         </div>
         <div class="calc-formula-tip">J = C × i × t &nbsp;·&nbsp; Rendimento linear sem capitalização</div>
@@ -2068,8 +2068,10 @@ const SUPA_KEY = 'sb_publishable_oHl0-u-N_ELgmbdNE4B0nQ_3cRvRdXO';
         <div class="calc-formula-tip">i = (VF/VI)^(1/n) − 1 &nbsp;·&nbsp; Descubra a taxa de qualquer investimento</div>
       </div>
 
+      <div class="calc-tip" id="calc-tip" style="margin-bottom:14px">
+        👆 Digite os valores acima — o resultado aparece automaticamente
+      </div>
       <button class="calc-btn" onclick="calcCompute()">Calcular →</button>
-      <div class="calc-tip" id="calc-tip">O resultado atualiza automaticamente conforme você digita</div>
 
     </div>
   </main>
@@ -4994,14 +4996,16 @@ const CALC = { mode: 'simple' };
 
 function calcSetMode(mode) {
   CALC.mode = mode;
-  ['simple','compound','price'].forEach(m => {
-    document.getElementById(`cmode-${m}`).classList.toggle('active', m === mode);
-    document.getElementById(`calc-panel-${m}`).style.display = m === mode ? 'block' : 'none';
+  ['simple','compound','price','rentab'].forEach(m => {
+    const btn   = document.getElementById('cmode-' + m);
+    const panel = document.getElementById('calc-panel-' + m);
+    if (btn)   btn.classList.toggle('active', m === mode);
+    if (panel) panel.style.display = m === mode ? 'block' : 'none';
   });
-  /* Esconder resultado ao trocar modo */
-  document.getElementById('calc-result-card').style.display  = 'none';
-  document.getElementById('calc-timeline').style.display     = 'none';
-  document.getElementById('calc-tip').textContent = 'Preencha os campos acima e toque em Calcular';
+  document.getElementById('calc-result-card').style.display = 'none';
+  document.getElementById('calc-timeline').style.display    = 'none';
+  const tip = document.getElementById('calc-tip');
+  if (tip) tip.textContent = '👆 Digite os valores acima — o resultado aparece automaticamente';
 }
 
 function calcCompute() {
@@ -5214,7 +5218,7 @@ function calcShowResult({ label, total, items, series, tip, seriesLabel, invertS
   }
 
   /* Scroll suave para ver o resultado */
-  setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+  setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
 }
 
 /* Listener: atualizar suffix de tempo no modo simples */
