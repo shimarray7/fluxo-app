@@ -1405,9 +1405,29 @@ input[type="number"] { -moz-appearance: textfield; }
 .account-share   { font-size:10px; color:var(--text3); margin-top:2px; }
 
 /* ── CONTAS A PAGAR ── */
-.bill-item { display:flex; align-items:center; gap:12px; padding:13px 0; border-bottom:1px solid var(--border); cursor:pointer; transition:opacity .15s; }
-.bill-item:hover { opacity:.75; }
+.bill-item { display:flex; align-items:center; gap:12px; padding:13px 0; border-bottom:1px solid var(--border); transition:opacity .15s; }
 .bill-item:last-child { border-bottom:none; padding-bottom:0; }
+.bill-item.paid-item { opacity:.55; }
+
+/* Botão de marcar como pago/pendente */
+.bill-check-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 2px solid var(--border-md);
+  background: none; cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; transition: all .2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.bill-check-btn:active { transform: scale(0.88); }
+.bill-check-btn.checked {
+  background: var(--green); border-color: var(--green); color: #0c0d10;
+}
+.bill-check-btn.overdue {
+  border-color: var(--red);
+}
+.bill-check-btn.soon {
+  border-color: var(--yellow);
+}
 .bill-icon  { width:42px; height:42px; border-radius:13px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
 .bill-info  { flex:1; min-width:0; }
 .bill-name  { font-size:14px; font-weight:500; margin-bottom:2px; }
@@ -1438,7 +1458,7 @@ input[type="number"] { -moz-appearance: textfield; }
     ───────────────────────────────────────────────────────────── */
     const SUPA_URL = 'https://egwgdobdiopanllhvsyy.supabase.co';
 const SUPA_KEY = 'sb_publishable_oHl0-u-N_ELgmbdNE4B0nQ_3cRvRdXO';
-  
+   
     const _supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
     window._supabase = _supabase;
   </script>
@@ -3250,13 +3270,21 @@ function renderBills() {
     else if (daysLeft<=3){ cls='due-urgent';  lbl=daysLeft===0?'Vence hoje!':`Vence em ${daysLeft}d`; }
     else if (daysLeft<=7){ cls='due-warning'; lbl=`Vence em ${daysLeft}d`; }
     const safeName = Utils.escape(b.name);
-    return `<div class="bill-item" onclick="openEditBill('${b.id}')">
-      <div class="bill-icon" style="background:${b.bg||'rgba(255,255,255,0.06)'}">${b.icon}</div>
-      <div class="bill-info">
+    const checkCls = b.paid ? 'checked' : daysLeft < 0 ? 'overdue' : daysLeft <= 3 ? 'soon' : '';
+    const checkIcon = b.paid ? '✓' : '○';
+    return `<div class="bill-item ${b.paid ? 'paid-item' : ''}">
+      <button class="bill-check-btn ${checkCls}"
+        onclick="toggleBillPaid('${b.id}')"
+        aria-label="${b.paid ? 'Marcar como pendente' : 'Marcar como pago'}"
+        title="${b.paid ? 'Clique para desmarcar' : 'Clique para marcar como pago'}">
+        ${b.paid ? '✓' : ''}
+      </button>
+      <div class="bill-icon" style="background:${b.bg||'rgba(255,255,255,0.06)'};cursor:pointer" onclick="openEditBill('${b.id}')">${b.icon}</div>
+      <div class="bill-info" style="cursor:pointer" onclick="openEditBill('${b.id}')">
         <div class="bill-name">${safeName}</div>
         <div class="bill-due ${cls}">${b.recurring?'<span style="color:var(--purple);font-size:10px">↻ </span>':''}${lbl}</div>
       </div>
-      <div class="bill-right">
+      <div class="bill-right" style="cursor:pointer" onclick="openEditBill('${b.id}')">
         <div class="bill-amount" style="${b.paid?'color:var(--green)':''}">${Utils.brl(b.amount)}</div>
         <div class="bill-status ${cls}">${b.paid?'Pago ✓':daysLeft<0?'Em atraso':'Pendente'}</div>
       </div>
