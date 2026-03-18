@@ -970,6 +970,17 @@ input[type="number"] { -moz-appearance: textfield; }
 .auth-form { width: 100%; }
 
 
+/* ── Modo privacidade: oculta valores sensíveis ── */
+.privacy-mode .mask-val {
+  filter: blur(6px);
+  user-select: none;
+  pointer-events: none;
+  transition: filter .3s ease;
+}
+.privacy-mode #privacy-btn { opacity: 1; }
+#privacy-btn { transition: opacity .2s; }
+
+
 /* ══════════════════════════════════════════
    ONBOARDING — layout à prova de mobile
    ══════════════════════════════════════════ */
@@ -1457,7 +1468,7 @@ input[type="number"] { -moz-appearance: textfield; }
     ───────────────────────────────────────────────────────────── */
     const SUPA_URL = 'https://egwgdobdiopanllhvsyy.supabase.co';
 const SUPA_KEY = 'sb_publishable_oHl0-u-N_ELgmbdNE4B0nQ_3cRvRdXO';
-   
+    
     const _supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
     window._supabase = _supabase;
   </script>
@@ -1654,19 +1665,25 @@ const SUPA_KEY = 'sb_publishable_oHl0-u-N_ELgmbdNE4B0nQ_3cRvRdXO';
     <div class="scroll-area">
       <!-- Saldo -->
       <div class="balance-hero" id="balance-hero">
-        <div class="balance-eyebrow">💳 SALDO GERAL</div>
+        <div class="balance-eyebrow">
+            💳 SALDO GERAL
+            <button id="privacy-btn" onclick="togglePrivacy()"
+              style="background:none;border:none;cursor:pointer;font-size:15px;
+                     padding:0 2px;opacity:.7;-webkit-tap-highlight-color:transparent"
+              aria-label="Ocultar valores" title="Ocultar/mostrar valores">👁️</button>
+          </div>
         <div class="balance-amount">
-          <span class="cur">R$</span><span id="display-balance">0</span>
+          <span class="cur mask-val">R$</span><span id="display-balance" class="mask-val">0</span>
         </div>
-        <div class="balance-trend" id="display-trend">—</div>
+        <div class="balance-trend mask-val" id="display-trend">—</div>
         <div class="balance-stats">
           <div class="b-stat">
             <div class="b-stat-label" id="label-income">📈 RECEITAS</div>
-            <div class="b-stat-val g" id="display-income">R$ 0</div>
+            <div class="b-stat-val g mask-val" id="display-income">R$ 0</div>
           </div>
           <div class="b-stat">
             <div class="b-stat-label" id="label-expense">📉 DESPESAS</div>
-            <div class="b-stat-val r" id="display-expense">R$ 0</div>
+            <div class="b-stat-val r mask-val" id="display-expense">R$ 0</div>
           </div>
         </div>
       </div>
@@ -1900,10 +1917,10 @@ const SUPA_KEY = 'sb_publishable_oHl0-u-N_ELgmbdNE4B0nQ_3cRvRdXO';
           <span class="settings-label" id="theme-settings-label">Tema escuro</span>
           <span class="settings-arrow" id="theme-settings-arrow">›</span>
         </div>
-        <div class="settings-item" onclick="showToast('🔔 Configurar notificações')"><div class="settings-icon">🔔</div><span class="settings-label">Notificações</span><span class="settings-arrow">›</span></div>
-        <div class="settings-item" onclick="exportData()"><div class="settings-icon">📤</div><span class="settings-label">Exportar dados (JSON)</span><span class="settings-arrow">›</span></div>
-        <div class="settings-item" onclick="importData()"><div class="settings-icon">📥</div><span class="settings-label">Importar backup (JSON)</span><span class="settings-arrow">›</span></div>
-        <div class="settings-item" onclick="confirmClearData()"><div class="settings-icon" style="background:rgba(255,107,107,0.1)">🗑</div><span class="settings-label" style="color:var(--red)">Apagar todos os dados</span><span class="settings-arrow">›</span></div>
+
+
+
+        <div class="settings-item" onclick="confirmClearData()"><div class="settings-icon">🗑</div><span class="settings-label" style="color:var(--text2)">Apagar todos os dados</span><span class="settings-arrow">›</span></div>
         <div class="settings-item" onclick="logout()"><div class="settings-icon">🚪</div><span class="settings-label" style="color:var(--red)">Sair da conta</span><span class="settings-arrow">›</span></div>
       </div>
       <div style="height:8px"></div>
@@ -3596,13 +3613,13 @@ function renderCardsSummary() {
   wrap.innerHTML = `
   <div class="card" style="margin-bottom:16px">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
-      <div>
+      <div style="overflow:hidden">
         <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Saldo Total</div>
-        <div style="font-family:var(--font-display);font-size:22px;font-weight:800;color:${balColor}">${Utils.brl(balance)}</div>
+        <div style="font-family:var(--font-display);font-size:clamp(14px,4.5vw,22px);font-weight:800;color:${balColor};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${Utils.brl(balance)}</div>
       </div>
-      <div>
+      <div style="overflow:hidden">
         <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Fatura Este Mês</div>
-        <div style="font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--red)">${Utils.brl(totalBilled)}</div>
+        <div style="font-family:var(--font-display);font-size:clamp(14px,4.5vw,22px);font-weight:800;color:var(--red);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${Utils.brl(totalBilled)}</div>
       </div>
       <div>
         <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Receitas (mês)</div>
@@ -4670,6 +4687,14 @@ function attachSwipes(container) {
 
 
 /* ─── Tema claro/escuro ─── */
+function togglePrivacy() {
+  const app = document.getElementById('app');
+  const btn = document.getElementById('privacy-btn');
+  const hidden = app.classList.toggle('privacy-mode');
+  if (btn) btn.textContent = hidden ? '🙈' : '👁️';
+  try { localStorage.setItem('fluxo_privacy', hidden ? '1' : '0'); } catch(e) {}
+}
+
 function toggleTheme() {
   const root    = document.getElementById('root');
   const isDark  = root.getAttribute('data-theme') === 'dark';
@@ -5440,6 +5465,12 @@ function obUpdateIncomeHint() {
   try {
     const saved = localStorage.getItem('fluxo_theme') || 'dark';
     applyTheme(saved);
+    /* Restaurar modo privacidade */
+    if (localStorage.getItem('fluxo_privacy') === '1') {
+      document.getElementById('app').classList.add('privacy-mode');
+      const btn = document.getElementById('privacy-btn');
+      if (btn) btn.textContent = '🙈';
+    }
   } catch(e) { applyTheme('dark'); }
 
   /* Dica de swipe (só após onboarding concluído) */
