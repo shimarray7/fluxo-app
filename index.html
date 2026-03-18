@@ -970,13 +970,7 @@ input[type="number"] { -moz-appearance: textfield; }
 .auth-form { width: 100%; }
 
 
-/* ── Modo privacidade: oculta valores sensíveis ── */
-.privacy-mode .mask-val {
-  filter: blur(6px);
-  user-select: none;
-  pointer-events: none;
-  transition: filter .3s ease;
-}
+/* ── Modo privacidade ── */
 .privacy-mode #privacy-btn { opacity: 1; }
 #privacy-btn { transition: opacity .2s; }
 
@@ -1468,7 +1462,7 @@ input[type="number"] { -moz-appearance: textfield; }
     ───────────────────────────────────────────────────────────── */
     const SUPA_URL = 'https://egwgdobdiopanllhvsyy.supabase.co';
 const SUPA_KEY = 'sb_publishable_oHl0-u-N_ELgmbdNE4B0nQ_3cRvRdXO';
-    
+   
     const _supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
     window._supabase = _supabase;
   </script>
@@ -1673,17 +1667,17 @@ const SUPA_KEY = 'sb_publishable_oHl0-u-N_ELgmbdNE4B0nQ_3cRvRdXO';
               aria-label="Ocultar valores" title="Ocultar/mostrar valores">👁️</button>
           </div>
         <div class="balance-amount">
-          <span class="cur mask-val">R$</span><span id="display-balance" class="mask-val">0</span>
+          <span class="cur">R$</span><span id="display-balance">0</span>
         </div>
-        <div class="balance-trend mask-val" id="display-trend">—</div>
+        <div class="balance-trend" id="display-trend">—</div>
         <div class="balance-stats">
           <div class="b-stat">
             <div class="b-stat-label" id="label-income">📈 RECEITAS</div>
-            <div class="b-stat-val g mask-val" id="display-income">R$ 0</div>
+            <div class="b-stat-val g" id="display-income">R$ 0</div>
           </div>
           <div class="b-stat">
             <div class="b-stat-label" id="label-expense">📉 DESPESAS</div>
-            <div class="b-stat-val r mask-val" id="display-expense">R$ 0</div>
+            <div class="b-stat-val r" id="display-expense">R$ 0</div>
           </div>
         </div>
       </div>
@@ -2867,6 +2861,17 @@ const Utils = {
   /* Gera ID único */
   uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); },
 
+  /* Verifica se modo privacidade está ativo */
+  isPrivate() {
+    return document.getElementById('app')?.classList.contains('privacy-mode') || false;
+  },
+
+  /* Formata valor com suporte a privacidade — use no lugar de brl() para valores sensíveis */
+  priv(value, compact = false) {
+    if (this.isPrivate()) return '• • • •';
+    return this.brl(value, compact);
+  },
+
   /* Formata moeda BRL */
   brl(value, compact = false) {
     if (compact && Math.abs(value) >= 1000) {
@@ -2972,10 +2977,10 @@ function renderBalance() {
   const monthNet     = monthIncome - monthExpense;
 
   document.getElementById('display-balance').textContent =
-    Math.abs(balance).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+    Utils.isPrivate() ? '• • • •' : Math.abs(balance).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
 
-  document.getElementById('display-income').textContent  = Utils.brl(monthIncome);
-  document.getElementById('display-expense').textContent = Utils.brl(monthExpense);
+  document.getElementById('display-income').textContent  = Utils.priv(monthIncome);
+  document.getElementById('display-expense').textContent = Utils.priv(monthExpense);
 
   /* Atualiza labels com o mês de referência */
   const mName = MONTHS_PT[period.month] + ' ' + period.year;
@@ -2986,10 +2991,10 @@ function renderBalance() {
 
   const trendEl = document.getElementById('display-trend');
   if (monthNet > 0) {
-    trendEl.textContent = `↑ +${Utils.brl(monthNet)} este mês`;
+    trendEl.textContent = Utils.isPrivate() ? '↑ • • • • este mês' : `↑ +${Utils.brl(monthNet)} este mês`;
     trendEl.className = 'balance-trend';
   } else if (monthNet < 0) {
-    trendEl.textContent = `↓ ${Utils.brl(monthNet)} este mês`;
+    trendEl.textContent = Utils.isPrivate() ? '↓ • • • • este mês' : `↓ ${Utils.brl(monthNet)} este mês`;
     trendEl.className = 'balance-trend neg';
   } else {
     trendEl.textContent = '— Neutro este mês';
@@ -3615,25 +3620,25 @@ function renderCardsSummary() {
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
       <div style="overflow:hidden">
         <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Saldo Total</div>
-        <div style="font-family:var(--font-display);font-size:clamp(14px,4.5vw,22px);font-weight:800;color:${balColor};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${Utils.brl(balance)}</div>
+        <div style="font-family:var(--font-display);font-size:clamp(14px,4.5vw,22px);font-weight:800;color:${balColor};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${Utils.priv(balance)}</div>
       </div>
       <div style="overflow:hidden">
         <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Fatura Este Mês</div>
-        <div style="font-family:var(--font-display);font-size:clamp(14px,4.5vw,22px);font-weight:800;color:var(--red);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${Utils.brl(totalBilled)}</div>
+        <div style="font-family:var(--font-display);font-size:clamp(14px,4.5vw,22px);font-weight:800;color:var(--red);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${Utils.priv(totalBilled)}</div>
       </div>
       <div>
         <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Receitas (mês)</div>
-        <div style="font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--green)">+ ${Utils.brl(monthIncome)}</div>
+        <div style="font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--green)">${Utils.isPrivate() ? '• • • •' : '+ ' + Utils.brl(monthIncome)}</div>
       </div>
       <div>
         <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Despesas (mês)</div>
-        <div style="font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--red)">– ${Utils.brl(monthExpense)}</div>
+        <div style="font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--red)">${Utils.isPrivate() ? '• • • •' : '– ' + Utils.brl(monthExpense)}</div>
       </div>
     </div>
     <div style="border-top:1px solid var(--border);padding-top:12px">
       <div style="display:flex;justify-content:space-between;margin-bottom:6px">
         <span style="font-size:11px;color:var(--text2)">Crédito disponível</span>
-        <span style="font-size:11px;font-weight:700;color:${creditBarColor}">${Utils.brl(creditAvailable)} de ${Utils.brl(totalLimit)}</span>
+        <span style="font-size:11px;font-weight:700;color:${creditBarColor}">${Utils.isPrivate() ? '• • • •' : Utils.brl(creditAvailable) + ' de ' + Utils.brl(totalLimit)}</span>
       </div>
       <div class="bar-track">
         <div class="bar-fill" style="width:${creditUsedPct}%;background:${creditBarColor};transition:width 1s var(--ease-out)"></div>
@@ -4693,6 +4698,9 @@ function togglePrivacy() {
   const hidden = app.classList.toggle('privacy-mode');
   if (btn) btn.textContent = hidden ? '🙈' : '👁️';
   try { localStorage.setItem('fluxo_privacy', hidden ? '1' : '0'); } catch(e) {}
+  /* Re-renderizar valores imediatamente */
+  renderBalance();
+  if (UI.currentScreen === 'cards') renderCards();
 }
 
 function toggleTheme() {
